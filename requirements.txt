@@ -1,0 +1,13 @@
+wowsunpack==0.1.7
+pyinstaller
+build
+twine
+pycryptodome
+pycryptodomex
+packaging
+lxml
+Pillow
+numpy
+imageio
+imageio-ffmpeg
+discord.py
