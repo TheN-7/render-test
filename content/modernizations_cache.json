@@ -1,0 +1,2068 @@
+{
+  "PCM094": {
+    "consumable_id": 4195536816,
+    "name": "Advanced Mechanical Maintenance",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM094_Special_Mod_I_Halland_f778bd640bf36a5563b7bd10c147ab4c22028011e575ae71732f9468c16d160c.png",
+    "effects": [
+      "Maximum ship speed while the Engine Boost consumable is active: +8%",
+      "Number of ship consumable charges: +1",
+      "HP restoration efficiency when using the Repair Party consumable: +25%"
+    ],
+    "slot": 6,
+    "internal": "PCM094_Special_Mod_I_Halland",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM046": {
+    "consumable_id": 4245868464,
+    "name": "Main Battery Director System",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM046_Special_Mod_I_Yamato_03a248b76ff6273c992bbc618ed978fa82937a575428dba049fc94052e8c0b52.png",
+    "effects": [
+      "Maximum main battery shell dispersion: -7%",
+      "Main battery traverse speed: -13%"
+    ],
+    "slot": 6,
+    "internal": "PCM046_Special_Mod_I_Yamato",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM078": {
+    "consumable_id": 4212314032,
+    "name": "Automated Main Battery Loading Mechanism",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM078_Special_Mod_I_Kremlin_02573046a9c2451e620d5cdaf96759bfe9078bdfd3c4fe98c6c8140dbfcd564f.png",
+    "effects": [
+      "Number of ship consumable charges: +1",
+      "Main battery reload time: -18%",
+      "Main battery firing range: -12%"
+    ],
+    "slot": 6,
+    "internal": "PCM078_Special_Mod_I_Kremlin",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM043": {
+    "consumable_id": 4249014192,
+    "name": "Enhanced Engineering Systems",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM043_Special_Mod_I_Conqueror_dc694ba3dc9ae8ae8e9933005e06faa6e7bbd0f5cb74dad67e9ebb536aef064b.png",
+    "effects": [
+      "Rudder shift time: -40%",
+      "Main battery traverse speed: +13%",
+      "Steering gears repair time: -80%"
+    ],
+    "slot": 5,
+    "internal": "PCM043_Special_Mod_I_Conqueror",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM102": {
+    "consumable_id": 4187148208,
+    "name": "Reinforced Bulkheads",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM102_DepthChargeResist_Mod_I_47df9d1c94062dc0ca0a1b23177d080913acb530bcebfa8d2e40ad41dd9b1c13.png",
+    "effects": [
+      "Damage taken from depth charges: -15%"
+    ],
+    "slot": 5,
+    "internal": "PCM102_DepthChargeResist_Mod_I",
+    "shiplevels": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Submarine"
+    ]
+  },
+  "PCM084": {
+    "consumable_id": 4206022576,
+    "name": "Sonar Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM084_Pinger_Mod_I_8408638069e27d3cdc4e9bb87f1a656b8dd8db10c0b7188b33ae5870ed741e28.png",
+    "effects": [
+      "Risk of sonar becoming incapacitated: -25%",
+      "Sonar repair time: -25%"
+    ],
+    "slot": 1,
+    "internal": "PCM084_Pinger_Mod_I",
+    "shiplevels": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Submarine"
+    ]
+  },
+  "PCM097": {
+    "consumable_id": 4192391088,
+    "name": "Aerodynamic Torpedo Fin Stabilizers",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM097_Special_Mod_I_Manfred_Richthofen_7ddabf3cf64eeb86ddfbc54510feb3a1cddcb7b92b66d6514dfcb70dcc3e0bd5.png",
+    "effects": [
+      "Torpedo bomber HP: +15%",
+      "Torpedo Arming Distance: -10%",
+      "Torpedo damage: +10%"
+    ],
+    "slot": 6,
+    "internal": "PCM097_Special_Mod_I_Manfred_Richthofen",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM062": {
+    "consumable_id": 4229091248,
+    "name": "Fuel Injection System",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM062_Special_Mod_I_Hakuryu_2be7b6be13a15f3a07e5b0fdf635e30aa32ddd5f360609cb648eed371e4fb664.png",
+    "effects": [
+      "Squadron engine boost duration: -30%",
+      "Maximum squadron speed: +12.5%"
+    ],
+    "slot": 6,
+    "internal": "PCM062_Special_Mod_I_Hakuryu",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM070": {
+    "consumable_id": 4220702640,
+    "name": "Torpedo Tubes Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM070_Torpedo_Mod_IV_9e34ebc4f1a15656201b4148e32870eb1c67ddb2fb1a0bc410406236b472d1dd.png",
+    "effects": [
+      "Torpedo speed: +5%",
+      "Risk of torpedo tubes becoming incapacitated: -40%",
+      "Torpedo tubes traverse speed: +20%"
+    ],
+    "slot": 3,
+    "internal": "PCM070_Torpedo_Mod_IV",
+    "shiplevels": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Cruiser",
+      "Destroyer",
+      "Submarine"
+    ]
+  },
+  "PCM027": {
+    "consumable_id": 4265791408,
+    "name": "Concealment System Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM027_ConcealmentMeasures_Mod_I_bda1386ab237032301b6273e655a1998de5bfb50e2c8e59124c8a93d73093f0a.png",
+    "effects": [
+      "Ship's detectability range: -10%",
+      "Squadron detectability range: -10%",
+      "Dispersion of shells fired by enemies attacking your ship: +5%"
+    ],
+    "slot": 5,
+    "internal": "PCM027_ConcealmentMeasures_Mod_I",
+    "shiplevels": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Battleship",
+      "Cruiser",
+      "Destroyer",
+      "AirCarrier"
+    ]
+  },
+  "PCM109": {
+    "consumable_id": 4179808176,
+    "name": "Modified Explosive Ammunition",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM109_Modern_Arm_Mod_Red1_0ad058c68bbc5ef9c8636588aa11a41cb1e04f7689f9dc5b72407545b3661fb0.png",
+    "effects": [
+      "Damage from torpedoes to burning enemies: +50%",
+      "Damage from missiles to burning enemies: +50%",
+      "Main battery damage: -30%"
+    ],
+    "slot": 1,
+    "internal": "PCM109_Modern_Arm_Mod_Red1",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM081": {
+    "consumable_id": 4209168304,
+    "name": "Skip Bomber Modification\u00a02",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM081_SkipBomber_Mod_I_2cd6e53f3f98a452ad08ab91b39fa830392d7c832860ea940a63239421502efc.png",
+    "effects": [
+      "Skip bomber HP: +7.5%"
+    ],
+    "slot": 4,
+    "internal": "PCM081_SkipBomber_Mod_I",
+    "shiplevels": [
+      6,
+      8,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "AirCarrier"
+    ]
+  },
+  "PCM100": {
+    "consumable_id": 4189245360,
+    "name": "Damage Control System Modification\u00a03",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM100_DamageControl_Mod_III_651b92ae1b4a8afb9a2a4eda4df77036950e0136fc9b374663fdefba2b51e6ed.png",
+    "effects": [
+      "Damage taken from flooding: -5%",
+      "Damage taken from fires: -5%"
+    ],
+    "slot": 2,
+    "internal": "PCM100_DamageControl_Mod_III",
+    "shiplevels": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Submarine"
+    ]
+  },
+  "PCM065": {
+    "consumable_id": 4225945520,
+    "name": "Bombers Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM065_DiveBomber_Mod_I_21e8e450f4a9cd094413ac67eaab4840231f7365e90e95765a158ad2f2973d84.png",
+    "effects": [
+      "Bomber HP: +7.5%"
+    ],
+    "slot": 4,
+    "internal": "PCM065_DiveBomber_Mod_I",
+    "shiplevels": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "AirCarrier"
+    ]
+  },
+  "PCM030": {
+    "consumable_id": 4262645680,
+    "name": "Main Armaments Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM030_MainWeapon_Mod_I_bb1e79efbcc73dfa03a6dd5ae173566ee691b77e3a6587389d6f7ea07eb03588.png",
+    "effects": [
+      "Main battery repair time: -20%",
+      "Risk of torpedo tubes becoming incapacitated: -20%",
+      "Main battery survivability: +50%",
+      "Torpedo tubes repair time: -20%",
+      "Torpedo tubes survivability: +50%",
+      "Risk of main battery becoming incapacitated: -20%"
+    ],
+    "slot": 1,
+    "internal": "PCM030_MainWeapon_Mod_I",
+    "shiplevels": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Battleship",
+      "Cruiser",
+      "Destroyer",
+      "Submarine"
+    ]
+  },
+  "PCM028": {
+    "consumable_id": 4264742832,
+    "name": "Artillery Plotting Room Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM028_FireControl_Mod_I_US_c5594545cedeb1f273aecbd98d18c8dbbcc7b0edc9b5e1b8184eacb443991cb5.png",
+    "effects": [
+      "Secondary battery firing range: +5%",
+      "Maximum secondary battery shell dispersion: -5%",
+      "Main battery firing range: +16%"
+    ],
+    "slot": 3,
+    "internal": "PCM028_FireControl_Mod_I_US",
+    "shiplevels": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Battleship"
+    ]
+  },
+  "PCM049": {
+    "consumable_id": 4242722736,
+    "name": "Upgraded Damage Control Equipment",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM049_Special_Mod_I_Hindenburg_68009ce0ee1cab11c745d80d2c43a8f104716a21d2b0fac133d933b919260865.png",
+    "effects": [
+      "Repair Party consumable action time: +20%",
+      "Rudder shift time: -20%",
+      "Fire extinguishing time: -50%",
+      "Flooding recovery time: -50%"
+    ],
+    "slot": 5,
+    "internal": "PCM049_Special_Mod_I_Hindenburg",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM103": {
+    "consumable_id": 4186099632,
+    "name": "Reserve Battery Unit Modification 1",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM103_SubsEnergyFreeze_Mod_I_d50f8e22bdc9eb438130ef3c75a69ff262f2efe6911dfc4d255af2ff8782f7e3.png",
+    "effects": [
+      "Reserve Battery Unit consumable action time: +20%"
+    ],
+    "slot": 2,
+    "internal": "PCM103_SubsEnergyFreeze_Mod_I",
+    "shiplevels": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Submarine"
+    ]
+  },
+  "PCM116": {
+    "consumable_id": 4172468144,
+    "name": "Increased Steering Gear Power",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM116_Modern_Spec_Mod_White2_46aeb990338a286ebaf009401d79c943011a36f61770c7ac1ed229331e95175e.png",
+    "effects": [
+      "Rudder efficiency: +30%",
+      "Rudder shift time: -30%"
+    ],
+    "slot": 3,
+    "internal": "PCM116_Modern_Spec_Mod_White2",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM068": {
+    "consumable_id": 4222799792,
+    "name": "Aircraft Engines Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM068_PlaneEngine_Mod_I_e02ff4e46c84a5ba8e8684e6dfdc8fb7522094d27dee584fa37757ab59c80fca.png",
+    "effects": [
+      "Squadron engine boost duration: +10%"
+    ],
+    "slot": 2,
+    "internal": "PCM068_PlaneEngine_Mod_I",
+    "shiplevels": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "AirCarrier"
+    ]
+  },
+  "PCM033": {
+    "consumable_id": 4259499952,
+    "name": "Aiming Systems Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM033_Guidance_Mod_I_10c7521afe2d577c42618dd04cf6834f2be78cf6b64503844cf87793a5816484.png",
+    "effects": [
+      "Maximum main battery shell dispersion: -7%",
+      "Secondary battery firing range: +5%",
+      "Maximum secondary battery shell dispersion: -5%",
+      "Torpedo tubes traverse speed: +20%"
+    ],
+    "slot": 3,
+    "internal": "PCM033_Guidance_Mod_I",
+    "shiplevels": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Battleship",
+      "Cruiser",
+      "Destroyer"
+    ]
+  },
+  "PCM087": {
+    "consumable_id": 4202876848,
+    "name": "Airstrike Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM087_AirSupport_Mod_I_d26ea96903bf2c47669142777cfa61b0285e652ce26304ed9502bc8de35d0ded.png",
+    "effects": [
+      "Depth charge damage: +15%",
+      "Airstrike armament reload time: -20%",
+      "Airstrike aircraft HP: +25%"
+    ],
+    "slot": 4,
+    "internal": "PCM087_AirSupport_Mod_I",
+    "shiplevels": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "AirCarrier",
+      "Battleship",
+      "Cruiser"
+    ]
+  },
+  "PCM059": {
+    "consumable_id": 4232236976,
+    "name": "Improved Main Artillery",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM059_Special_Mod_I_Yueyang_da5f91336b055b47691a7887ff7d46e42c7bcfb696404c654d8def92ffd16cb1.png",
+    "effects": [
+      "Ship HP: +10%",
+      "Surveillance Radar consumable action time: +20%",
+      "Main battery reload time: -18%",
+      "Smoke screen dispersion time: +20%"
+    ],
+    "slot": 5,
+    "internal": "PCM059_Special_Mod_I_Yueyang",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM106": {
+    "consumable_id": 4182953904,
+    "name": "Improved Rangefinders",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM106_Special_Mod_I_Colombo_bf5268c6fffea2844fd2efce4c294238d48c363de48b4f5684693399703081f7.png",
+    "effects": [
+      "Maximum main battery shell dispersion: -6%",
+      "Number of Smoke Generator consumable charges: -2",
+      "Main battery reload time: -6%"
+    ],
+    "slot": 6,
+    "internal": "PCM106_Special_Mod_I_Colombo",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM071": {
+    "consumable_id": 4219654064,
+    "name": "Aerial Torpedoes Modification 1",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM071_TorpedoBombs_Mod_I_b2311b4df2109c664d8caae386b3989f803bc94a1fd7b6ce8e402b9a7ef1ab87.png",
+    "effects": [
+      "Aerial torpedo speed: +5%"
+    ],
+    "slot": 3,
+    "internal": "PCM071_TorpedoBombs_Mod_I",
+    "shiplevels": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "AirCarrier"
+    ]
+  },
+  "PCM090": {
+    "consumable_id": 4199731120,
+    "name": "Submarine Steering Gears",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM090_SteeringGearSubmarine_Mod_II_cf2b67d0512cf325deee50996eec558475020e346011d57777a4a003ae2ef36d.png",
+    "effects": [
+      "Rudder shift time: -50%",
+      "Diving plane shift time: -50%"
+    ],
+    "slot": 4,
+    "internal": "PCM090_SteeringGearSubmarine_Mod_II",
+    "shiplevels": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Submarine"
+    ]
+  },
+  "PCM074": {
+    "consumable_id": 4216508336,
+    "name": "Auxiliary Armaments Modification\u00a02",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM074_AuxiliaryArmament_Mod_I_6c88e35c308f597529e7bd744826e39242fdb3a3f0429b0a3b2fb7a219480498.png",
+    "effects": [
+      "Secondary battery reload time: -20%",
+      "Number of explosions produced by AA defense salvos when the Defensive AA Fire consumable is active: +2",
+      "Continuous AA damage: +15%",
+      "Damage from AA shell explosions: +15%"
+    ],
+    "slot": 6,
+    "internal": "PCM074_AuxiliaryArmament_Mod_I",
+    "shiplevels": [
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Battleship",
+      "Cruiser",
+      "Destroyer",
+      "AirCarrier"
+    ]
+  },
+  "PCM039": {
+    "consumable_id": 4253208496,
+    "name": "Damage Control Party Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM039_CrashCrew_Mod_I_2ee6c56dba1c1a399eb10c3d68a1d2a723469a8e16442a1d91df0acd14229975.png",
+    "effects": [
+      "Consumable action time: +40%"
+    ],
+    "slot": 1,
+    "internal": "PCM039_CrashCrew_Mod_I",
+    "shiplevels": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Battleship",
+      "AirCarrier",
+      "Cruiser",
+      "Destroyer",
+      "Submarine"
+    ]
+  },
+  "PCM093": {
+    "consumable_id": 4196585392,
+    "name": "Air Groups Modification\u00a03",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM093_Airplanes_Mod_IV_be95630f2acaf1be7a4c66144afc2dbc55ccddef500c7ce6a65d51fa8aab4567.png",
+    "effects": [
+      "Squadron speed: +5%",
+      "Aircraft preparation time: -5%",
+      "Squadron HP: +15%"
+    ],
+    "slot": 4,
+    "internal": "PCM093_Airplanes_Mod_IV",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM058": {
+    "consumable_id": 4233285552,
+    "name": "Improved Hull Concealment",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM058_Special_Mod_I_Gearing_a665869d43b4e2067730b5c7f14b631343ec68dc22b1f77cab309acc13e06c06.png",
+    "effects": [
+      "Ship's detectability range: -15%",
+      "Dispersion of shells fired by enemies attacking your ship: +5%",
+      "Main battery reload time: +15%",
+      "Torpedo tube reload time: +5%"
+    ],
+    "slot": 5,
+    "internal": "PCM058_Special_Mod_I_Gearing",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM023": {
+    "consumable_id": 4269985712,
+    "name": "Damage Control System Modification\u00a02",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM023_DamageControl_Mod_II_3c6aea0c5bccc94f1d8f1fa52662232afa007d784638ce6e981c8ad3457c63fa.png",
+    "effects": [
+      "Fire extinguishing time: -15%",
+      "Flooding recovery time: -15%"
+    ],
+    "slot": 4,
+    "internal": "PCM023_DamageControl_Mod_II",
+    "shiplevels": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Battleship",
+      "Cruiser",
+      "Destroyer",
+      "AirCarrier",
+      "Submarine"
+    ]
+  },
+  "PCM105": {
+    "consumable_id": 4184002480,
+    "name": "Improved Electrical Systems",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM105_Special_Mod_I_Vermont_393d11fe7ffac8cf53ceb52b3d9244b3e1e4e044f9f73d90fbe8e6c76169c4ee.png",
+    "effects": [
+      "Airstrike armament reload time: -15%",
+      "Continuous AA damage: +15%",
+      "Main battery reload time: -10%"
+    ],
+    "slot": 5,
+    "internal": "PCM105_Special_Mod_I_Vermont",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM112": {
+    "consumable_id": 4176662448,
+    "name": "Enhanced Engine Power",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM112_Modern_Def_Mod_White2_3791946cc2dce2d672a64918733fadde4fb0411157061782ad9b042d48c86bec.png",
+    "effects": [
+      "Ship speed: +20%"
+    ],
+    "slot": 2,
+    "internal": "PCM112_Modern_Def_Mod_White2",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM077": {
+    "consumable_id": 4213362608,
+    "name": "Additional Smoke Generators",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM077_Special_Mod_I_Harugumo_b5faa0bc1e6a665ffaae3829df18b231b5d9d063821f9acc11b88d4830cf0ec6.png",
+    "effects": [
+      "Smoke screen dispersion time: +30%",
+      "Smoke Generator consumable action time: +100%",
+      "Number of ship consumable charges: +1",
+      "Main battery reload time: -6%"
+    ],
+    "slot": 5,
+    "internal": "PCM077_Special_Mod_I_Harugumo",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM042": {
+    "consumable_id": 4250062768,
+    "name": "Surveillance Radar Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM042_RLSSearch_Mod_I_ef6060adee17e116f0fafc65678e23f547c272c6302d749858b33739885cdf51.png",
+    "effects": [
+      "Consumable action time: +20%"
+    ],
+    "slot": 2,
+    "internal": "PCM042_RLSSearch_Mod_I",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM052": {
+    "consumable_id": 4239577008,
+    "name": "Enhanced Propulsion Plant",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM052_Special_Mod_I_Des_Moines_cae4b7bd894b9ab7a6b91738e03542c9da4c0847771f08d974f8fb67ab00063c.png",
+    "effects": [
+      "Time to reach full engine power when accelerating: -50%",
+      "Rudder shift time: -20%"
+    ],
+    "slot": 6,
+    "internal": "PCM052_Special_Mod_I_Des_Moines",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM096": {
+    "consumable_id": 4193439664,
+    "name": "Ballistic Capped Armor-Piercing Shells",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM096_Special_Mod_I_Petropavlovsk_75c6ba48692f77b9abc723198acb7083d6bda9341de008705a28c3e35e8a45a7.png",
+    "effects": [
+      "Maximum main battery shell dispersion: -10%",
+      "Main battery AP shell damage: +7.5%",
+      "Ship consumable action time: -25%"
+    ],
+    "slot": 6,
+    "internal": "PCM096_Special_Mod_I_Petropavlovsk",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM061": {
+    "consumable_id": 4230139824,
+    "name": "Modified External Hardpoints",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM061_Special_Mod_I_Midway_55464df0f57d6650b792a77c4e638a792a0e26467b2c48721114dbaa959cf027.png",
+    "effects": [
+      "Bomber cruising speed: +5%",
+      "Squadron bomb damage: +10%"
+    ],
+    "slot": 6,
+    "internal": "PCM061_Special_Mod_I_Midway",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM026": {
+    "consumable_id": 4266839984,
+    "name": "Torpedo Lookout System",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM026_LookoutStation_Mod_I_9bdab08af77f5c612cec2a357353f7b60d37118aaab4763721dd53230f68943b.png",
+    "effects": [
+      "Assured acquisition range of torpedoes: 1.8km"
+    ],
+    "slot": 5,
+    "internal": "PCM026_LookoutStation_Mod_I",
+    "shiplevels": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Battleship",
+      "Cruiser",
+      "Destroyer"
+    ]
+  },
+  "PCM024": {
+    "consumable_id": 4268937136,
+    "name": "Propulsion Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM024_Engine_Mod_II_4b4f4c217cf5cf580f47ccbbf76ecede110c5143055c55ab45a82d19e87423fb.png",
+    "effects": [
+      "Time to reach full engine power when accelerating: -50%"
+    ],
+    "slot": 4,
+    "internal": "PCM024_Engine_Mod_II",
+    "shiplevels": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Battleship",
+      "Cruiser",
+      "Destroyer",
+      "Submarine"
+    ]
+  },
+  "PCM115": {
+    "consumable_id": 4173516720,
+    "name": "Radar-Absorbing Coating",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM115_Modern_Spec_Mod_White1_ecc877e343d91796cd67ab519ff4c7777f63da56fc36d4967788ae61639b0151.png",
+    "effects": [
+      "Detectability range by sea: -15%"
+    ],
+    "slot": 3,
+    "internal": "PCM115_Modern_Spec_Mod_White1",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM080": {
+    "consumable_id": 4210216880,
+    "name": "ARP Main Battery Director System",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM080_Special_Mod_I_ARP_Yamato_72259084ffeb27a1f2a46973b7288db0ba53b2da0e36a92d087d04905a28078c.png",
+    "effects": [
+      "Maximum main battery shell dispersion: -7%",
+      "Main battery traverse speed: -13%"
+    ],
+    "slot": 6,
+    "internal": "PCM080_Special_Mod_I_ARP_Yamato",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM045": {
+    "consumable_id": 4246917040,
+    "name": "Improved Ammunition Hoists",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM045_Special_Mod_I_GKurfurst_2d75f2e7357bc70c49d342ec965f242c44fc0cedec4579dff47d3e02e684de50.png",
+    "effects": [
+      "Secondary battery reload time: -15%",
+      "Main battery reload time: -10%",
+      "Main battery firing range: -8%"
+    ],
+    "slot": 6,
+    "internal": "PCM045_Special_Mod_I_GKurfurst",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM099": {
+    "consumable_id": 4190293936,
+    "name": "Ship-to-Shore Radio",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM099_Special_Mod_I_Gouden_Leeuw_1351a7cde72c7612a7395cf9145c61b130d162c72f013e38b8f222fc802182e8.png",
+    "effects": [
+      "HE bomb damage: +10%",
+      "Number of Airstrike flights: +1",
+      "Airstrike range: +8%"
+    ],
+    "slot": 6,
+    "internal": "PCM099_Special_Mod_I_Gouden_Leeuw",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM064": {
+    "consumable_id": 4226994096,
+    "name": "Torpedo Bombers Modification\u00a02",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM064_TorpedoBomber_Mod_I_0b61e598ffa7eec0b80905d7dfc015f97c73348afd67350d4891b4f122d06c48.png",
+    "effects": [
+      "Torpedo bomber HP: +7.5%"
+    ],
+    "slot": 4,
+    "internal": "PCM064_TorpedoBomber_Mod_I",
+    "shiplevels": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "AirCarrier"
+    ]
+  },
+  "PCM029": {
+    "consumable_id": 4263694256,
+    "name": "Artillery Plotting Room Modification\u00a02",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM029_FireControl_Mod_II_US_35db21691559a7acc1af802e9a0fdcaf9bd6f56a5a0ddff720997643eec8b75d.png",
+    "effects": [
+      "Maximum main battery shell dispersion: -11%"
+    ],
+    "slot": 6,
+    "internal": "PCM029_FireControl_Mod_II_US",
+    "shiplevels": [
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Battleship"
+    ]
+  },
+  "PCM118": {
+    "consumable_id": 4170370992,
+    "name": "Strike Systems Priority",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM118_Modern_Spec_Mod_Red2_f617fd8694da46c72523bb6ea3aa4e9734deabeca9eee51616d4d73cb152e6b7.png",
+    "effects": [
+      "Interval between missile launches: -15%",
+      "Torpedo tube reload time: -15%",
+      "Damage taken from missiles: +15%"
+    ],
+    "slot": 3,
+    "internal": "PCM118_Modern_Spec_Mod_Red2",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM055": {
+    "consumable_id": 4236431280,
+    "name": "Master Fire Control Director",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM055_Special_Mod_I_Khabarovsk_a66e81334311b53f6ef58594da905281bb29f9999f4d7baae4051bf38950a056.png",
+    "effects": [
+      "Ship consumable action time: -20%",
+      "Main battery reload time: -6%",
+      "Main battery firing range: +10%"
+    ],
+    "slot": 5,
+    "internal": "PCM055_Special_Mod_I_Khabarovsk",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM083": {
+    "consumable_id": 4207071152,
+    "name": "Hydrophone Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM083_Hydrophone_Mod_I_bfbb7aab146945a1ddbe31e0705ccd717d3663440746a5d182d3626378f7d73c.png",
+    "effects": [],
+    "slot": 2,
+    "internal": "PCM083_Hydrophone_Mod_I",
+    "shiplevels": [
+      7
+    ],
+    "shiptypes": [
+      "Submarine"
+    ]
+  },
+  "PCM048": {
+    "consumable_id": 4243771312,
+    "name": "Improved Bridge",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM048_Special_Mod_I_Zao_0dd804dda59fbd0aef566e803409a4f01aa5c04fc0aae996c164477a9d11a5b9.png",
+    "effects": [
+      "Maximum main battery shell dispersion: -7%",
+      "Main battery firing range: +8%"
+    ],
+    "slot": 6,
+    "internal": "PCM048_Special_Mod_I_Zao",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM086": {
+    "consumable_id": 4203925424,
+    "name": "Dive Capacity Modification\u00a02",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM086_Autonomy_Mod_II_d6687fa32cb730a70aaa0a21d287ea5215e22a277b30a46f58b7a72b4403faae.png",
+    "effects": [
+      "Dive Capacity: +15%"
+    ],
+    "slot": 6,
+    "internal": "PCM086_Autonomy_Mod_II",
+    "shiplevels": [
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Submarine"
+    ]
+  },
+  "PCM051": {
+    "consumable_id": 4240625584,
+    "name": "Aerosol Smoke Curtain System",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM051_Special_Mod_I_Minotaur_d226020ae41ced94f545198db6aa874367bafdb904a7aaae5604ec6461b5aad5.png",
+    "effects": [
+      "Ship's detectability range: -5%",
+      "Smoke screen dispersion time: -20%",
+      "Smoke Generator consumable action time: +300%",
+      "Ship consumables preparation and reload time: -10%"
+    ],
+    "slot": 5,
+    "internal": "PCM051_Special_Mod_I_Minotaur",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM036": {
+    "consumable_id": 4256354224,
+    "name": "Engine Boost Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM036_SpeedBooster_Mod_I_c569785f8ec3df5a6df18ed0ee4116527f83151fcbb645e154c51ac32257193f.png",
+    "effects": [
+      "Consumable total usage time: +5%",
+      "Consumable action time: +30%"
+    ],
+    "slot": 2,
+    "internal": "PCM036_SpeedBooster_Mod_I",
+    "shiplevels": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Destroyer"
+    ]
+  },
+  "PCM035": {
+    "consumable_id": 4257402800,
+    "name": "Steering Gears Modification\u00a02",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM035_SteeringGear_Mod_III_9bbaf379d4027413eb48f3407a4374e40151f55611d71fac0a66d12a5d4e4434.png",
+    "effects": [
+      "Rudder shift time: -40%",
+      "Steering gears repair time: -80%"
+    ],
+    "slot": 5,
+    "internal": "PCM035_SteeringGear_Mod_III",
+    "shiplevels": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Cruiser",
+      "Destroyer"
+    ]
+  },
+  "PCM089": {
+    "consumable_id": 4200779696,
+    "name": "Depth Charges Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM089_DepthCharges_Mod_I_734ed2711a1c6aa8227fa258f81054dcc2db8aecf66e4baaf0006589181ceb33.png",
+    "effects": [
+      "Number of Charges: +2"
+    ],
+    "slot": 4,
+    "internal": "PCM089_DepthCharges_Mod_I",
+    "shiplevels": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Destroyer"
+    ]
+  },
+  "PCM054": {
+    "consumable_id": 4237479856,
+    "name": "Extended Main Battery Effective Range",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM054_Special_Mod_I_Moskva_810e3f8e65cfd5787d2b9b56bde30d1a65e15cd6c702be9f3ce2971e5f064786.png",
+    "effects": [
+      "Main battery traverse speed: -20%",
+      "Maximum main battery shell dispersion: -7%",
+      "Main battery firing range: +8%"
+    ],
+    "slot": 6,
+    "internal": "PCM054_Special_Mod_I_Moskva",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM117": {
+    "consumable_id": 4171419568,
+    "name": "Emergency Readiness System",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM117_Modern_Spec_Mod_Red1_8a8b8de40c210de91309cf77509e4f21e9fc4ca12e1b1a76ab2fb57f1649819c.png",
+    "effects": [
+      "Reload time reduction for all armament types for each 1% of HP lost: -0.45%",
+      "Incoming damage: +25%"
+    ],
+    "slot": 3,
+    "internal": "PCM117_Modern_Spec_Mod_Red1",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM019": {
+    "consumable_id": 4274180016,
+    "name": "Secondary Battery Modification\u00a02",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM019_SecondaryGun_Mod_III_5538dcc721697ec184b45f637c3dc7500ae36f95dbe71744f9a2b341525d59c3.png",
+    "effects": [
+      "Secondary battery reload time: -20%"
+    ],
+    "slot": null,
+    "internal": "PCM019_SecondaryGun_Mod_III",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM108": {
+    "consumable_id": 4180856752,
+    "name": "Enhanced Launch System",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM108_Modern_Arm_Mod_White2_559796d2257bdd7e8ad3d1fa67e7a870952c4291ac88cce15cb11bae3ef5e0b6.png",
+    "effects": [
+      "Ship torpedo range: +25%",
+      "Torpedo speed: +10%",
+      "Missile's flight speed: +5%",
+      "Missile's flight range: +15%"
+    ],
+    "slot": 1,
+    "internal": "PCM108_Modern_Arm_Mod_White2",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM073": {
+    "consumable_id": 4217556912,
+    "name": "Squadron Consumables Modification 1",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM073_AbilityWorktimeBoostCV_Mod_I_0e24c3794564386951349e94b8235cd8679480816268dfbb356f66c240de736a.png",
+    "effects": [
+      "Number of squadron consumable charges: +1"
+    ],
+    "slot": 5,
+    "internal": "PCM073_AbilityWorktimeBoostCV_Mod_I",
+    "shiplevels": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "AirCarrier"
+    ]
+  },
+  "PCM038": {
+    "consumable_id": 4254257072,
+    "name": "Spotting Aircraft Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM038_Spotter_Mod_I_a48c7868c3de031f19f93cdfaa1fb007ff202e3269eefa19ac37127870857f7e.png",
+    "effects": [
+      "Consumable total usage time: +5%",
+      "Consumable action time: +30%"
+    ],
+    "slot": 1,
+    "internal": "PCM038_Spotter_Mod_I",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM092": {
+    "consumable_id": 4197633968,
+    "name": "Skip Bomber Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM092_SkipBomber_Mod_I_fe7a70577c8374fbf036992caea4f13933121155d138f4d730817a3942318103.png",
+    "effects": [
+      "Skip bomber attack time: +2s"
+    ],
+    "slot": 3,
+    "internal": "PCM092_SkipBomber_Mod_I",
+    "shiplevels": [
+      6,
+      8,
+      10
+    ],
+    "shiptypes": [
+      "AirCarrier"
+    ]
+  },
+  "PCM057": {
+    "consumable_id": 4234334128,
+    "name": "Torpedo Quick Reload System",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM057_Special_Mod_I_Shimakaze_ce60ff9c1fe388706178668d9224a45416c7519ff477b5966add1fca8deb7abd.png",
+    "effects": [
+      "Risk of torpedo tubes becoming incapacitated: +50%",
+      "Torpedo tube reload time: -25%",
+      "Torpedo tubes traverse speed: -70%"
+    ],
+    "slot": 6,
+    "internal": "PCM057_Special_Mod_I_Shimakaze",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM022": {
+    "consumable_id": 4271034288,
+    "name": "Steering Gears Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM022_SteeringGear_Mod_I_b40ec12bfefa680f9632933b2261b136cddac1be490ab886b0bdb40f70299694.png",
+    "effects": [
+      "Risk of steering gears becoming incapacitated: -20%",
+      "Steering gears repair time: -20%"
+    ],
+    "slot": null,
+    "internal": "PCM022_SteeringGear_Mod_I",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM020": {
+    "consumable_id": 4273131440,
+    "name": "Damage Control System Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM020_DamageControl_Mod_I_bbc708467bc8f1e6264ac88fb8999ea40660e4b0b94b59ab7b3f1a8b60539ed8.png",
+    "effects": [
+      "Risk of catching fire: -5%",
+      "Risk of flooding: -3%"
+    ],
+    "slot": 2,
+    "internal": "PCM020_DamageControl_Mod_I",
+    "shiplevels": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Battleship",
+      "Cruiser",
+      "Destroyer",
+      "AirCarrier"
+    ]
+  },
+  "PCM111": {
+    "consumable_id": 4177711024,
+    "name": "Reinforced Hull",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM111_Modern_Def_Mod_White1_c8e55141cad1a1627ce295067d8c775c26076c7f9ee816615524cfbe4384edaa.png",
+    "effects": [
+      "Ship HP: +20%"
+    ],
+    "slot": 2,
+    "internal": "PCM111_Modern_Def_Mod_White1",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM076": {
+    "consumable_id": 4214411184,
+    "name": "Improved Camouflage Patterns",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM076_Special_Mod_I_Kleber_bf39b2d60c1e487c2ccc62a7f4936f74af88d24178dc36b6229130cf405be268.png",
+    "effects": [
+      "Ship's detectability range: -20%",
+      "Main battery reload time: +60%"
+    ],
+    "slot": 6,
+    "internal": "PCM076_Special_Mod_I_Kleber",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM041": {
+    "consumable_id": 4251111344,
+    "name": "Hydroacoustic Search Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM041_SonarSearch_Mod_I_3cda151b218c2e6efc9261e9c20aa8bdf412876e0004fb6d6e5bd8297b3cc559.png",
+    "effects": [
+      "Consumable action time: +20%"
+    ],
+    "slot": 2,
+    "internal": "PCM041_SonarSearch_Mod_I",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM095": {
+    "consumable_id": 4194488240,
+    "name": "Augmented Smoke Generators",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM095_Special_Mod_I_Venezia_6aecb7fa165e0d8456fe481329b87fd0c4ebe835d27d5798fd277c0545e4365a.png",
+    "effects": [
+      "Number of Smoke Generator consumable charges: +2",
+      "Smoke Generator consumable cooldown time: -55%"
+    ],
+    "slot": 5,
+    "internal": "PCM095_Special_Mod_I_Venezia",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM060": {
+    "consumable_id": 4231188400,
+    "name": "Main Gun Automatic Loader",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM060_Special_Mod_I_Grozovoi_2316737e816cfee98424f7f21167f2f4369c8be2d9685279906d41e48976b72a.png",
+    "effects": [
+      "Ship's detectability range: +5%",
+      "Main battery traverse speed: -7%",
+      "Main battery reload time: -18%"
+    ],
+    "slot": 6,
+    "internal": "PCM060_Special_Mod_I_Grozovoi",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM025": {
+    "consumable_id": 4267888560,
+    "name": "Steering Gears Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM025_SteeringGear_Mod_II_523c86ce4c7d228e73ee3d2cb406f4d78a205aa2453fec45b0925dec519bf7c5.png",
+    "effects": [
+      "Rudder shift time: -20%"
+    ],
+    "slot": 4,
+    "internal": "PCM025_SteeringGear_Mod_II",
+    "shiplevels": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Battleship",
+      "Cruiser",
+      "Destroyer"
+    ]
+  },
+  "PCM067": {
+    "consumable_id": 4223848368,
+    "name": "Attack Aircraft Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM067_Fighter_Mod_II_3fd5e2cb1c8c1689839163710175ae2d3bf5f3dc1b38e738d8fd74a699915816.png",
+    "effects": [
+      "Attack aircraft attack time: +2s"
+    ],
+    "slot": 3,
+    "internal": "PCM067_Fighter_Mod_II",
+    "shiplevels": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "AirCarrier"
+    ]
+  },
+  "PCM114": {
+    "consumable_id": 4174565296,
+    "name": "Modified Provision System",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM114_Modern_Def_Mod_Red2_849a4ae364e64c95c2e6d5c87333c99c149fad462e9a838a8402c4bf00885abe.png",
+    "effects": [
+      "Ship speed: +10%",
+      "Number of ship consumable charges: -1",
+      "Ship consumable action time: +50%"
+    ],
+    "slot": 2,
+    "internal": "PCM114_Modern_Def_Mod_Red2",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM079": {
+    "consumable_id": 4211265456,
+    "name": "Forced Takeoff and Landing Equipment",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM079_Special_Mod_I_Audacious_86524e8e3a0097f1771e8811ca24b2f3e8ecd14b647988f6a724a7c10a473710.png",
+    "effects": [
+      "Ship's detectability range: -15%",
+      "Time to reach full engine power when accelerating: -50%",
+      "Rudder shift time: -30%",
+      "Squadron engine boost duration: +20%"
+    ],
+    "slot": 6,
+    "internal": "PCM079_Special_Mod_I_Audacious",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM044": {
+    "consumable_id": 4247965616,
+    "name": "Main Battery Fire Control Station",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM044_Special_Mod_I_Republique_c2a22ea0678cc6c4d90cd7a49676b8e3c9aba4f1a1f0deae3ed9d7a0a3160183.png",
+    "effects": [
+      "Fire extinguishing time: +15%",
+      "Main battery reload time: -18%",
+      "Flooding recovery time: +15%"
+    ],
+    "slot": 6,
+    "internal": "PCM044_Special_Mod_I_Republique",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM063": {
+    "consumable_id": 4228042672,
+    "name": "Attack Aircraft Modification\u00a02",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM063_Fighter_Mod_I_2222e1f5405277e53e55123e69a3dd8c15efffb42b4b94553ef47ad431427286.png",
+    "effects": [
+      "Attack aircraft HP: +7.5%"
+    ],
+    "slot": 4,
+    "internal": "PCM063_Fighter_Mod_I",
+    "shiplevels": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "AirCarrier"
+    ]
+  },
+  "PCM098": {
+    "consumable_id": 4191342512,
+    "name": "Automated Gun and Fuel Systems",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM098_Special_Mod_I_Elbing_e2561f1b07f31d0f66be54f98bcc9dfa154ec7c3ab209d923cb7591d83845294.png",
+    "effects": [
+      "Maximum ship speed while the Engine Boost consumable is active: +12%",
+      "Main battery traverse speed: +100%",
+      "Main battery reload time: -6%",
+      "Main battery firing range: -8%"
+    ],
+    "slot": 6,
+    "internal": "PCM098_Special_Mod_I_Elbing",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM082": {
+    "consumable_id": 4208119728,
+    "name": "Dive Capacity Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM082_Autonomy_Mod_I_d4cd1df50d5fdd33c85a558c847db79deee20b36b7e12eb1e9cdae209daccea5.png",
+    "effects": [
+      "Dive Capacity Recharge Rate per Second: +10%"
+    ],
+    "slot": 3,
+    "internal": "PCM082_Autonomy_Mod_I",
+    "shiplevels": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Submarine"
+    ]
+  },
+  "PCM101": {
+    "consumable_id": 4188196784,
+    "name": "Torpedo Tubes Modification\u00a03",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM101_Torpedo_Mod_V_4ab392b775fb5be13d3a1e32cf78b779e56dea6b2c043a3e18e414d4e3903c33.png",
+    "effects": [
+      "Torpedo damage: +7%"
+    ],
+    "slot": 5,
+    "internal": "PCM101_Torpedo_Mod_V",
+    "shiplevels": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Submarine"
+    ]
+  },
+  "PCM066": {
+    "consumable_id": 4224896944,
+    "name": "Torpedo Bombers Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM066_TorpedoBomber_Mod_II_6157748f107ecb2b6abf26af4d0c686fb41039e48148565584a8edfeca2b3626.png",
+    "effects": [
+      "Torpedo bomber attack time: +5s"
+    ],
+    "slot": 3,
+    "internal": "PCM066_TorpedoBomber_Mod_II",
+    "shiplevels": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "AirCarrier"
+    ]
+  },
+  "PCM031": {
+    "consumable_id": 4261597104,
+    "name": "Auxiliary Armaments Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM031_SecondaryWeapon_Mod_I_5369d8b071df59a515906433ea1fff10a55841495258bcd04d3365467e61e4af.png",
+    "effects": [
+      "Secondary battery survivability: +100%",
+      "AA mount survivability: +100%"
+    ],
+    "slot": 1,
+    "internal": "PCM031_SecondaryWeapon_Mod_I",
+    "shiplevels": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Battleship",
+      "Cruiser",
+      "Destroyer",
+      "AirCarrier"
+    ]
+  },
+  "PCM040": {
+    "consumable_id": 4252159920,
+    "name": "Defensive AA Fire Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM040_AirDefenseDisp_Mod_I_ad31cbc6e01b6939c7338b15953b73544389846793a572653881d504ccdc1095.png",
+    "effects": [
+      "Consumable cooldown time: -10%",
+      "Consumable action time: +20%"
+    ],
+    "slot": 2,
+    "internal": "PCM040_AirDefenseDisp_Mod_I",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM085": {
+    "consumable_id": 4204974000,
+    "name": "Sonar Modification\u00a02",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM085_Pinger_Mod_II_ec266de29e277b35e1862c9a7a69e5689fbc2e3bbaccdb284baa7fa190baa188.png",
+    "effects": [
+      "Sonar ping velocity: +10%"
+    ],
+    "slot": 2,
+    "internal": "PCM085_Pinger_Mod_II",
+    "shiplevels": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Submarine"
+    ]
+  },
+  "PCM113": {
+    "consumable_id": 4175613872,
+    "name": "Survivability System",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM113_Modern_Def_Mod_Red1_8ad0b3b6a22272e73668083fda6c28741abb6d149cbbd10e43635d8cfe9ed548.png",
+    "effects": [
+      "Number of ship consumable charges: +2",
+      "Ship consumable action time: -40%"
+    ],
+    "slot": 2,
+    "internal": "PCM113_Modern_Def_Mod_Red1",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM050": {
+    "consumable_id": 4241674160,
+    "name": "Improved Main Battery Loading Mechanisms",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM050_Special_Mod_I_Henri_IV_21f35a72d169171b9de8952be3e807ade6930aabe9f8052a11f04db587acd0cc.png",
+    "effects": [
+      "Ship's detectability range: +10%",
+      "Main battery reload time: -10%",
+      "Main battery firing range: +5%"
+    ],
+    "slot": 5,
+    "internal": "PCM050_Special_Mod_I_Henri_IV",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM104": {
+    "consumable_id": 4185051056,
+    "name": "Submarine Surveillance Modification 1",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM104_SubmarineLocator_Mod_I_d379003b0f82b4ea288f858ed67862ef08beee2363f71971170549d053ff9e6e.png",
+    "effects": [
+      "Submarine Surveillance preparation and cooldown time: -20%"
+    ],
+    "slot": 3,
+    "internal": "PCM104_SubmarineLocator_Mod_I",
+    "shiplevels": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Submarine"
+    ]
+  },
+  "PCM069": {
+    "consumable_id": 4221751216,
+    "name": "Engine Room Protection",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM069_Movement_Mod_I_ca8429dcc45fdad36cdd474a13e5a289d6f7cf27ae32c9f30d42b72b9db493af.png",
+    "effects": [
+      "Risk of engine becoming incapacitated: -20%",
+      "Engine repair time: -20%",
+      "Risk of steering gears becoming incapacitated: -20%",
+      "Steering gears repair time: -20%"
+    ],
+    "slot": 2,
+    "internal": "PCM069_Movement_Mod_I",
+    "shiplevels": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Battleship",
+      "Cruiser",
+      "Destroyer",
+      "Submarine"
+    ]
+  },
+  "PCM034": {
+    "consumable_id": 4258451376,
+    "name": "Aiming Systems Modification\u00a00",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM034_Guidance_Mod_0_3a9f202e80fe3e42f54ab8e753f0cc188330ff648bc0c39e21fc8dd41896944b.png",
+    "effects": [
+      "Main battery traverse speed: +20%",
+      "Maximum main battery shell dispersion: -40%",
+      "Secondary battery firing range: +20%",
+      "Maximum secondary battery shell dispersion: -40%",
+      "Torpedo tubes traverse speed: +20%"
+    ],
+    "slot": 1,
+    "internal": "PCM034_Guidance_Mod_0",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM088": {
+    "consumable_id": 4201828272,
+    "name": "Anti-Submarine Aircraft Modification 2",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM088_AirSupport_Mod_II_b51d134cb569af29b1b93a0a3c66b564ded6c7f95023fe17418da954631e338d.png",
+    "effects": [
+      "Depth charge damage: +30%",
+      "Airstrike aircraft HP: +100%"
+    ],
+    "slot": null,
+    "internal": "PCM088_AirSupport_Mod_II",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM053": {
+    "consumable_id": 4238528432,
+    "name": "Enhanced Countermeasures",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM053_Special_Mod_I_Worcester_e87a6524d67d9e2b6d73553da49fd2de6f327b44c0302fc4b62c2fb2124ae4fb.png",
+    "effects": [
+      "Priority AA sector preparation time: -20%",
+      "Number of ship consumable charges: +1",
+      "Ship consumables preparation and reload time: -20%"
+    ],
+    "slot": 6,
+    "internal": "PCM053_Special_Mod_I_Worcester",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM032": {
+    "consumable_id": 4260548528,
+    "name": "Magazine Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM032_PowderMagazine_Mod_I_9607d8ec91ddcca4a95443845b888fbd9de4cd81df5a30a199d400657a552017.png",
+    "effects": [],
+    "slot": 1,
+    "internal": "PCM032_PowderMagazine_Mod_I",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM107": {
+    "consumable_id": 4181905328,
+    "name": "Enhanced Ammunition Loading System",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM107_Modern_Arm_Mod_White1_0821f2e6e0567af5bcff4e2c225fe71dc9ca3d0cab72299433d1e9cb9ba1a74f.png",
+    "effects": [
+      "Secondary battery reload time: -5%",
+      "Main battery reload time: -10%"
+    ],
+    "slot": 1,
+    "internal": "PCM107_Modern_Arm_Mod_White1",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM072": {
+    "consumable_id": 4218605488,
+    "name": "Ship Consumable\nModification 1",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM072_AbilityWorktimeBoost_Mod_I_e6323cc6cf2a0c16e8a3a3ca4db0ceaebbdb868447435dbafea6f580b66ff101.png",
+    "effects": [
+      "Ship consumable total usage time: +2.5%",
+      "Ship consumable action time: +10%"
+    ],
+    "slot": 5,
+    "internal": "PCM072_AbilityWorktimeBoost_Mod_I",
+    "shiplevels": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Cruiser",
+      "Destroyer",
+      "Battleship",
+      "Submarine"
+    ]
+  },
+  "PCM037": {
+    "consumable_id": 4255305648,
+    "name": "Smoke Generator Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM037_SmokeGenerator_Mod_I_b33f7fdeb4ee66cf362c5700356efd827f184a77982480bdb452105bee439639.png",
+    "effects": [
+      "Smoke Generator consumable action time: +20%",
+      "Smoke Curtain Generator consumable action time: +20%",
+      "Smoke Generator consumable total usage time: +5%"
+    ],
+    "slot": 3,
+    "internal": "PCM037_SmokeGenerator_Mod_I",
+    "shiplevels": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Destroyer"
+    ]
+  },
+  "PCM091": {
+    "consumable_id": 4198682544,
+    "name": "Submarine Steering Gears Modification\u00a03",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM091_SteeringGearSubmarine_Mod_III_d8785c428973c0f80fb0690f12b84903ac8059e4099e3e66e50ca21ed1ce99a0.png",
+    "effects": [
+      "Rudder shift time: -40%",
+      "Diving plane shift time: -40%",
+      "Steering gears repair time: -80%"
+    ],
+    "slot": 5,
+    "internal": "PCM091_SteeringGearSubmarine_Mod_III",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM056": {
+    "consumable_id": 4235382704,
+    "name": "Torpedo Fire Control System",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM056_Special_Mod_I_Z_52_3f419319993c7b1098b2620d04c49ca01f607a6cf3295d6eca1c26a707a7333f.png",
+    "effects": [
+      "Ship's detectability range: -5%",
+      "Torpedo speed: +12%",
+      "Torpedo tube reload time: -15%",
+      "Dispersion of shells fired by enemies attacking your ship: +5%"
+    ],
+    "slot": 5,
+    "internal": "PCM056_Special_Mod_I_Z_52",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM021": {
+    "consumable_id": 4272082864,
+    "name": "Propulsion Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM021_Engine_Mod_I_37cefbd363c75808e937b300b9a375770c575abb52d0de9955818276b615f67e.png",
+    "effects": [
+      "Risk of engine becoming incapacitated: -20%",
+      "Engine repair time: -20%"
+    ],
+    "slot": null,
+    "internal": "PCM021_Engine_Mod_I",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM047": {
+    "consumable_id": 4244819888,
+    "name": "Reinforced Emergency Response",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM047_Special_Mod_I_Montana_6fc3f2487fc9c2f2915c37f608dcd70bf9c8b0847cd973e8ed9603a057e29e98.png",
+    "effects": [
+      "Rudder shift time: -30%",
+      "Fire extinguishing time: -10%",
+      "Flooding recovery time: -10%",
+      "Steering gears repair time: -70%"
+    ],
+    "slot": 5,
+    "internal": "PCM047_Special_Mod_I_Montana",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM110": {
+    "consumable_id": 4178759600,
+    "name": "Modified Ammunition Activation System",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM110_Modern_Arm_Mod_Red2_f0adcb22a9027fd37dc5606d08aa48aa33d02dc9ed74c28de413599256c9517e.png",
+    "effects": [
+      "Damage to enemy citadel with AP and SAP\u00a0shells: +20%",
+      "Missile hit damage: +10%",
+      "Target acquisition radius: -40%"
+    ],
+    "slot": 1,
+    "internal": "PCM110_Modern_Arm_Mod_Red2",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM075": {
+    "consumable_id": 4215459760,
+    "name": "Enhanced Torpedo Loading Mechanism",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM075_Special_Mod_I_Daring_3f5f2d4c9fd21f007e10003ca9f30131e74638ea9f5cb208795aa14f0ecc184f.png",
+    "effects": [
+      "Ship's detectability range: -10%",
+      "Torpedo speed: +15%",
+      "Torpedo tube reload time: -20%",
+      "Main battery reload time: +12%"
+    ],
+    "slot": 5,
+    "internal": "PCM075_Special_Mod_I_Daring",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM017": {
+    "consumable_id": 4276277168,
+    "name": "Air Groups Modification\u00a02",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM017_Airplanes_Mod_III_aaeae422fb9a8b73c633376933f946f3ca06d8439448f9d7e8a753f5a42e4e2e.png",
+    "effects": [
+      "Squadron HP: +7.5%"
+    ],
+    "slot": 6,
+    "internal": "PCM017_Airplanes_Mod_III",
+    "shiplevels": [
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "AirCarrier"
+    ]
+  },
+  "PCM008": {
+    "consumable_id": 4285714352,
+    "name": "Gun Fire Control System Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM008_FireControl_Mod_I_00ca72f1de03da65dd34d319c1472bc24992100158f23ee78102250c27486262.png",
+    "effects": [
+      "Maximum main battery shell dispersion: -7%"
+    ],
+    "slot": null,
+    "internal": "PCM008_FireControl_Mod_I",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM005": {
+    "consumable_id": 4288860080,
+    "name": "Secondary Battery Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM005_SecondaryGun_Mod_I_c500b33861c8f7da04c2065b484e275c76051afc3bb2c828f67028ef6eecd5f5.png",
+    "effects": [
+      "Secondary battery survivability: +20%"
+    ],
+    "slot": null,
+    "internal": "PCM005_SecondaryGun_Mod_I",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM004": {
+    "consumable_id": 4289908656,
+    "name": "AA Guns Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM004_AirDefense_Mod_I_cf64d4037df2b98cddcabb208133c31e11f3b10a544a25306980c3ef03d3fbaa.png",
+    "effects": [
+      "AA mount survivability: +20%"
+    ],
+    "slot": null,
+    "internal": "PCM004_AirDefense_Mod_I",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM003": {
+    "consumable_id": 4290957232,
+    "name": "Air Groups Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM003_Airplanes_Mod_I_485ef8a23ba10fdbd0f0e25fa418e15dcbde0b5b582fdb9aa5e05066bec128ac.png",
+    "effects": [
+      "Air squadron return speed: +20%"
+    ],
+    "slot": 1,
+    "internal": "PCM003_Airplanes_Mod_I",
+    "shiplevels": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "AirCarrier"
+    ]
+  },
+  "PCM002": {
+    "consumable_id": 4292005808,
+    "name": "Torpedo Tubes Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM002_Torpedo_Mod_I_c3bae84d068d5a7b49fb04bf8a20e94ba4e4a57aa69253aebec1bf1c110e04b3.png",
+    "effects": [
+      "Risk of torpedo tubes becoming incapacitated: -20%",
+      "Torpedo tubes repair time: -20%"
+    ],
+    "slot": null,
+    "internal": "PCM002_Torpedo_Mod_I",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM001": {
+    "consumable_id": 4293054384,
+    "name": "Main Battery Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM001_MainGun_Mod_I_4fdc35f67324a13dec582adc6718de0e3c711c15e8f022b6180c1e34ecc54161.png",
+    "effects": [
+      "Main battery repair time: -20%",
+      "Risk of main battery becoming incapacitated: -20%"
+    ],
+    "slot": null,
+    "internal": "PCM001_MainGun_Mod_I",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM006": {
+    "consumable_id": 4287811504,
+    "name": "Main Battery Modification\u00a02",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM006_MainGun_Mod_II_bffc35efc4e090487fd6110a10a2be1f5d51b7918303f724194817e698055412.png",
+    "effects": [
+      "Main battery traverse speed: +15%"
+    ],
+    "slot": 3,
+    "internal": "PCM006_MainGun_Mod_II",
+    "shiplevels": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Battleship",
+      "Cruiser",
+      "Destroyer"
+    ]
+  },
+  "PCM009": {
+    "consumable_id": 4284665776,
+    "name": "Flight Control Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM009_FlightControl_Mod_I_bf2a9dfb8c12b2f1394d0c6c53d20f78e92ea49ecf7e25d695bf1f3d53a02587.png",
+    "effects": [
+      "Squadron aircraft on deck: +2",
+      "Aircraft preparation time: -5%"
+    ],
+    "slot": 5,
+    "internal": "PCM009_FlightControl_Mod_I",
+    "shiplevels": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "AirCarrier"
+    ]
+  },
+  "PCM007": {
+    "consumable_id": 4286762928,
+    "name": "Torpedo Tubes Modification\u00a02",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM007_Torpedo_Mod_II_bcfb36729c46504c2a5c946d994812b95b541d69ea8db65a7093e09fbcb8b37d.png",
+    "effects": [
+      "Torpedo tubes repair time: -10%",
+      "Torpedo tubes traverse speed: +20%"
+    ],
+    "slot": null,
+    "internal": "PCM007_Torpedo_Mod_II",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM018": {
+    "consumable_id": 4275228592,
+    "name": "AA Guns Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM018_AirDefense_Mod_III_d3f357c6dc4e5e627a86e17a16432cb38da32bb1b7999b4a7852371491511770.png",
+    "effects": [
+      "Priority AA sector preparation time: -20%"
+    ],
+    "slot": 3,
+    "internal": "PCM018_AirDefense_Mod_III",
+    "shiplevels": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Battleship",
+      "Cruiser",
+      "Destroyer"
+    ]
+  },
+  "PCM016": {
+    "consumable_id": 4277325744,
+    "name": "Flight Control Modification\u00a02",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM016_FlightControl_Mod_II_18fde4edc229496137e3a8bd5c0209a4e578806c810559dc7611b82b5ee7e58b.png",
+    "effects": [
+      "Squadron speed: +5%"
+    ],
+    "slot": 6,
+    "internal": "PCM016_FlightControl_Mod_II",
+    "shiplevels": [
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "AirCarrier"
+    ]
+  },
+  "PCM015": {
+    "consumable_id": 4278374320,
+    "name": "Gun Fire Control System Modification\u00a02",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM015_FireControl_Mod_II_5ca921f0d2091adf28b41b6ba5c580a6f18367edbeabab0d0e7c8ad486971ab9.png",
+    "effects": [
+      "Main battery firing range: +16%"
+    ],
+    "slot": 6,
+    "internal": "PCM015_FireControl_Mod_II",
+    "shiplevels": [
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Battleship",
+      "Cruiser",
+      "Destroyer"
+    ]
+  },
+  "PCM014": {
+    "consumable_id": 4279422896,
+    "name": "Torpedo Tubes Modification\u00a02",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM014_Torpedo_Mod_III_460876b51f5b3133f939c6ca7b0ec3be146a5ea6776695388f5cc3365de8a56f.png",
+    "effects": [
+      "Risk of torpedo tubes becoming incapacitated: +50%",
+      "Torpedo tube reload time: -15%"
+    ],
+    "slot": 6,
+    "internal": "PCM014_Torpedo_Mod_III",
+    "shiplevels": [
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Cruiser",
+      "Destroyer",
+      "Submarine"
+    ]
+  },
+  "PCM013": {
+    "consumable_id": 4280471472,
+    "name": "Main Battery Modification\u00a03",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM013_MainGun_Mod_III_c6e20a5a027888820aca2cd031ba5959d38bc828202d8066ece4030712df8bd8.png",
+    "effects": [
+      "Main battery traverse speed: -13%",
+      "Main battery reload time: -12%"
+    ],
+    "slot": 6,
+    "internal": "PCM013_MainGun_Mod_III",
+    "shiplevels": [
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Battleship",
+      "Cruiser",
+      "Destroyer"
+    ]
+  },
+  "PCM012": {
+    "consumable_id": 4281520048,
+    "name": "Secondary Battery Modification\u00a01",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM012_SecondaryGun_Mod_II_c87da07dc4aebb94da59f3df3f8c2934279decb9677334a1a7e4b1f1c9f9ad04.png",
+    "effects": [
+      "Secondary battery firing range: +20%",
+      "Maximum secondary battery shell dispersion: -20%"
+    ],
+    "slot": 3,
+    "internal": "PCM012_SecondaryGun_Mod_II",
+    "shiplevels": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "shiptypes": [
+      "Battleship",
+      "Cruiser",
+      "AirCarrier"
+    ]
+  },
+  "PCM011": {
+    "consumable_id": 4282568624,
+    "name": "AA Guns Modification\u00a02",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM011_AirDefense_Mod_II_429f05ac3ec4b2bb64f9ccd8b89ad32090d915520b3297be5847efe0ee1b7fab.png",
+    "effects": [
+      "Continuous AA damage: +15%",
+      "Damage from AA shell explosions: +15%"
+    ],
+    "slot": null,
+    "internal": "PCM011_AirDefense_Mod_II",
+    "shiplevels": [],
+    "shiptypes": []
+  },
+  "PCM010": {
+    "consumable_id": 4283617200,
+    "name": "Air Groups Modification\u00a02",
+    "image": "https://wows-gloss-icons.wgcdn.co/icons/modernization/icon_modernization_PCM010_Airplanes_Mod_II_73de187d0a32573f9ec0d4849af2ccac683607a1d0cae97de738afc6c2da8ff6.png",
+    "effects": [
+      "Attack aircraft HP: +4%"
+    ],
+    "slot": null,
+    "internal": "PCM010_Airplanes_Mod_II",
+    "shiplevels": [],
+    "shiptypes": []
+  }
+}

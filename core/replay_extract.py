@@ -1,0 +1,1453 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+from typing import Any, Dict, Optional
+
+from .replay_unpack_adapter import read_replay, decode_packets, extract_events, _looks_serialized_chat_blob
+from .replay_schema import validate_extraction, to_legacy_schema
+from utils.map_names import get_battlearena_entry, get_map_name
+
+_SHIP_CACHE: Optional[Dict[str, Any]] = None
+
+
+def _safe_int(value: Any) -> Optional[int]:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _safe_float(value: Any, default: float = 0.0) -> float:
+    try:
+        if value is None:
+            return float(default)
+        return float(value)
+    except Exception:
+        return float(default)
+
+
+def _median_value(values: list[float]) -> float:
+    if not values:
+        return 0.0
+    ordered = sorted(values)
+    mid = len(ordered) // 2
+    if len(ordered) % 2:
+        return float(ordered[mid])
+    return float((ordered[mid - 1] + ordered[mid]) / 2.0)
+
+
+def _load_ship_cache() -> Dict[str, Any]:
+    global _SHIP_CACHE
+    if _SHIP_CACHE is not None:
+        return _SHIP_CACHE
+    path = Path(__file__).resolve().parent.parent / "ships_cache.json"
+    if not path.exists():
+        _SHIP_CACHE = {}
+        return _SHIP_CACHE
+    try:
+        _SHIP_CACHE = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        _SHIP_CACHE = {}
+    return _SHIP_CACHE
+
+
+def _ship_max_speed(ship_id: Optional[int]) -> Optional[float]:
+    if ship_id is None:
+        return None
+    cache = _load_ship_cache()
+    entry = cache.get(str(int(ship_id))) if cache else None
+    if not isinstance(entry, dict):
+        return None
+    speed = (
+        (entry.get("stats") or {})
+        .get("mobility", {})
+        .get("max_speed")
+    )
+    try:
+        return float(speed)
+    except (TypeError, ValueError):
+        return None
+
+
+def _median(values: list[float]) -> float:
+    if not values:
+        return 0.0
+    items = sorted(values)
+    mid = len(items) // 2
+    if len(items) % 2:
+        return float(items[mid])
+    return float(items[mid - 1] + items[mid]) / 2.0
+
+
+def _speed_samples_from_tracks(tracks: Dict[str, Dict[str, Any]]) -> Dict[str, list[Dict[str, float]]]:
+    samples: Dict[str, list[Dict[str, float]]] = {}
+    for entity_key, track in tracks.items():
+        points = track.get("points", [])
+        if not isinstance(points, list) or len(points) < 2:
+            continue
+        last_t = None
+        last_x = None
+        last_z = None
+        for point in points:
+            if not isinstance(point, dict):
+                continue
+            t_raw = point.get("t")
+            x_raw = point.get("x")
+            z_raw = point.get("z")
+            if t_raw is None or x_raw is None or z_raw is None:
+                continue
+            t = _safe_float(t_raw, 0.0)
+            x = _safe_float(x_raw, 0.0)
+            z = _safe_float(z_raw, 0.0)
+            if last_t is not None:
+                dt = t - last_t
+                if dt > 1e-3:
+                    dx = x - float(last_x)
+                    dz = z - float(last_z)
+                    dist = (dx * dx + dz * dz) ** 0.5
+                    speed = dist / dt
+                    if 0.0 <= speed <= 60.0:
+                        samples.setdefault(str(entity_key), []).append({"t": float(t), "speed": float(speed)})
+            last_t = t
+            last_x = x
+            last_z = z
+    for entity_key, rows in samples.items():
+        rows.sort(key=lambda item: float(item.get("t", 0.0)))
+    return samples
+
+
+def _speed_boost_window(samples: list[Dict[str, float]], start_time: float, end_time: float) -> Optional[tuple[float, float]]:
+    if not samples or end_time <= start_time:
+        return None
+    window = [row for row in samples if start_time <= float(row.get("t", 0.0)) <= end_time]
+    if len(window) < 2:
+        return None
+    baseline_window = [row for row in samples if (start_time - 12.0) <= float(row.get("t", 0.0)) < start_time]
+    if len(baseline_window) < 3:
+        baseline_window = [row for row in samples if float(row.get("t", 0.0)) < start_time]
+    if len(baseline_window) < 3:
+        return None
+    baseline = _median([float(row.get("speed", 0.0)) for row in baseline_window])
+    if baseline <= 0.05:
+        baseline = _median([float(row.get("speed", 0.0)) for row in window])
+    if baseline <= 0.05:
+        return None
+    threshold = max(0.8, baseline * 0.06)
+    boosted = [row for row in window if float(row.get("speed", 0.0)) >= baseline + threshold]
+    if not boosted:
+        return None
+    start_t = float(boosted[0].get("t", start_time))
+    end_t = float(boosted[-1].get("t", end_time))
+    if end_t <= start_t:
+        return None
+    return start_t, end_t
+
+
+def _normalize_consumable_kinds_by_entity(raw: Any) -> Dict[str, set[str]]:
+    result: Dict[str, set[str]] = {}
+    if not isinstance(raw, dict):
+        return result
+    for entity_key, kinds in raw.items():
+        entity_id = _safe_int(entity_key)
+        if entity_id is None:
+            continue
+        values: set[str] = set()
+        if isinstance(kinds, (list, tuple, set)):
+            for kind in kinds:
+                name = str(kind or "").strip().lower()
+                if name:
+                    values.add(name)
+        if values:
+            result[str(int(entity_id))] = values
+    return result
+
+
+def _ship_allows_consumable(
+    allowed_kinds_by_entity: Dict[str, set[str]],
+    entity_id: int,
+    kind: str,
+) -> bool:
+    allowed = allowed_kinds_by_entity.get(str(int(entity_id)))
+    if not allowed:
+        return False
+    return str(kind or "").strip().lower() in allowed
+
+
+def _engine_events_from_speed_samples(
+    speed_samples: Dict[str, list[Dict[str, float]]],
+    entities: Dict[str, Dict[str, Any]],
+    allowed_kinds_by_entity: Optional[Dict[str, set[str]]] = None,
+) -> list[Dict[str, Any]]:
+    if not speed_samples or not entities:
+        return []
+    events: list[Dict[str, Any]] = []
+    for entity_key, samples in speed_samples.items():
+        if not samples:
+            continue
+        entity_id = _safe_int(entity_key)
+        if entity_id is None:
+            continue
+        if allowed_kinds_by_entity and not _ship_allows_consumable(allowed_kinds_by_entity, int(entity_id), "engine"):
+            continue
+        ship_id = _safe_int((entities.get(str(entity_key)) or {}).get("ship_id"))
+        max_speed = _ship_max_speed(ship_id)
+        if not max_speed or max_speed <= 0.0:
+            continue
+        threshold = max_speed * 1.02
+        active_start = None
+        last_t = None
+        for row in samples:
+            t = float(row.get("t", 0.0) or 0.0)
+            speed = float(row.get("speed", 0.0) or 0.0)
+            if speed >= threshold:
+                if active_start is None:
+                    active_start = t
+                last_t = t
+                continue
+            if active_start is None:
+                continue
+            if last_t is not None and (t - last_t) > 3.0:
+                if (last_t - active_start) >= 4.0:
+                    events.append(
+                        {
+                            "entity_id": int(entity_id),
+                            "kind": "engine",
+                            "start_time": round(float(active_start), 3),
+                            "end_time": round(float(last_t), 3),
+                            "duration_s": round(float(max(0.0, last_t - active_start)), 3),
+                        }
+                    )
+                active_start = None
+                last_t = None
+        if active_start is not None and last_t is not None and (last_t - active_start) >= 4.0:
+            events.append(
+                {
+                    "entity_id": int(entity_id),
+                    "kind": "engine",
+                    "start_time": round(float(active_start), 3),
+                    "end_time": round(float(last_t), 3),
+                    "duration_s": round(float(max(0.0, last_t - active_start)), 3),
+                }
+            )
+    events.sort(key=lambda item: (float(item.get("start_time", 0.0)), int(item.get("entity_id", -1))))
+    return events
+
+
+def _find_overlap_window(events: list[Dict[str, Any]], entity_id: int, start_time: float, end_time: float) -> Optional[tuple[float, float]]:
+    if not events or end_time <= start_time:
+        return None
+    best = None
+    best_overlap = 0.0
+    for row in events:
+        if int(row.get("entity_id", -1)) != int(entity_id):
+            continue
+        s0 = _safe_float(row.get("start_time"), 0.0)
+        s1 = _safe_float(row.get("end_time"), 0.0)
+        overlap = max(0.0, min(end_time, s1) - max(start_time, s0))
+        if overlap > best_overlap:
+            best_overlap = overlap
+            best = (s0, s1)
+    return best
+
+
+def _overlap_ratio(a0: float, a1: float, b0: float, b1: float) -> float:
+    if a1 <= a0:
+        return 0.0
+    overlap = max(0.0, min(a1, b1) - max(a0, b0))
+    return overlap / max(1e-6, (a1 - a0))
+
+
+def _smoke_deploy_events(smoke_puffs: list[Dict[str, Any]]) -> list[Dict[str, Any]]:
+    if not smoke_puffs:
+        return []
+    by_entity: Dict[int, list[float]] = {}
+    for puff in smoke_puffs:
+        if not isinstance(puff, dict):
+            continue
+        entity_id = _safe_int(puff.get("entity_id"))
+        if entity_id is None or entity_id < 0:
+            continue
+        start_time = _safe_float(puff.get("start_time"), 0.0)
+        if start_time <= 0.0:
+            continue
+        by_entity.setdefault(int(entity_id), []).append(float(start_time))
+
+    events: list[Dict[str, Any]] = []
+    gap_s = 6.0
+    tail_s = 2.0
+    for entity_id, times in by_entity.items():
+        if not times:
+            continue
+        times.sort()
+        cluster_start = times[0]
+        last_time = times[0]
+        for t in times[1:]:
+            if (t - last_time) <= gap_s:
+                last_time = t
+                continue
+            end_time = last_time + tail_s
+            if end_time > cluster_start:
+                events.append(
+                    {
+                        "entity_id": int(entity_id),
+                        "kind": "smoke",
+                        "start_time": round(float(cluster_start), 3),
+                        "end_time": round(float(end_time), 3),
+                        "duration_s": round(float(max(0.0, end_time - cluster_start)), 3),
+                    }
+                )
+            cluster_start = t
+            last_time = t
+        end_time = last_time + tail_s
+        if end_time > cluster_start:
+            events.append(
+                {
+                    "entity_id": int(entity_id),
+                    "kind": "smoke",
+                    "start_time": round(float(cluster_start), 3),
+                    "end_time": round(float(end_time), 3),
+                    "duration_s": round(float(max(0.0, end_time - cluster_start)), 3),
+                }
+            )
+    events.sort(key=lambda item: (float(item.get("start_time", 0.0)), int(item.get("entity_id", -1))))
+    return events
+
+
+def _normalize_control_points(raw_points: Any) -> list[Dict[str, Any]]:
+    if not isinstance(raw_points, list):
+        return []
+    points: list[Dict[str, Any]] = []
+    for row in raw_points:
+        if not isinstance(row, dict):
+            continue
+        points.append(
+            {
+                "entity_id": _safe_int(row.get("entity_id")) or 0,
+                "index": _safe_int(row.get("index")) if _safe_int(row.get("index")) is not None else -1,
+                "x": float(row.get("x", 0.0) or 0.0),
+                "z": float(row.get("z", 0.0) or 0.0),
+                "radius": float(row.get("radius", 0.0) or 0.0),
+                "capture_time_s": float(row.get("capture_time_s", 0.0) or 0.0),
+                "zone_type": _safe_int(row.get("zone_type")) if _safe_int(row.get("zone_type")) is not None else -1,
+                "is_control_point": bool(row.get("is_control_point", False)),
+                "is_enabled": bool(row.get("is_enabled", True)),
+                "is_visible": bool(row.get("is_visible", True)),
+                "timer_name": str(row.get("timer_name") or "").strip(),
+                "zone_params_id": _safe_int(row.get("zone_params_id")) if _safe_int(row.get("zone_params_id")) is not None else -1,
+                "zone_visual_id": _safe_int(row.get("zone_visual_id")) if _safe_int(row.get("zone_visual_id")) is not None else -1,
+                "zone_drop_id": _safe_int(row.get("zone_drop_id")) if _safe_int(row.get("zone_drop_id")) is not None else -1,
+            }
+        )
+    points.sort(
+        key=lambda item: (
+            0 if bool(item.get("is_control_point", False)) else 1,
+            int(item.get("index", -1)),
+            int(item.get("zone_type", -1)),
+            int(item.get("entity_id", 0)),
+        )
+    )
+    return points
+
+
+def _normalize_capture_timeline(raw_timeline: Any) -> list[Dict[str, Any]]:
+    if not isinstance(raw_timeline, list):
+        return []
+    timeline: list[Dict[str, Any]] = []
+    for row in raw_timeline:
+        if not isinstance(row, dict):
+            continue
+        caps_raw = row.get("caps", [])
+        caps: list[Dict[str, Any]] = []
+        if isinstance(caps_raw, list):
+            for cap in caps_raw:
+                if not isinstance(cap, dict):
+                    continue
+                cap_team_id = _safe_int(cap.get("team_id"))
+                cap_owner_id = _safe_int(cap.get("owner_team_id"))
+                cap_invader_id = _safe_int(cap.get("invader_team_id"))
+                caps.append(
+                    {
+                        "entity_id": _safe_int(cap.get("entity_id")) or 0,
+                        "index": _safe_int(cap.get("index")) if _safe_int(cap.get("index")) is not None else -1,
+                        "x": float(cap.get("x", 0.0) or 0.0),
+                        "z": float(cap.get("z", 0.0) or 0.0),
+                        "radius": float(cap.get("radius", 0.0) or 0.0),
+                        "progress": max(0.0, min(1.0, float(cap.get("progress", 0.0) or 0.0))),
+                        "capture_time_s": float(cap.get("capture_time_s", 0.0) or 0.0),
+                        "capture_speed": float(cap.get("capture_speed", 0.0) or 0.0),
+                        "team_id": cap_team_id if cap_team_id is not None else -1,
+                        "owner_team_id": cap_owner_id if cap_owner_id is not None else -1,
+                        "invader_team_id": cap_invader_id if cap_invader_id is not None else -1,
+                        "has_invaders": bool(cap.get("has_invaders", False)),
+                        "both_inside": bool(cap.get("both_inside", False)),
+                        "is_enabled": bool(cap.get("is_enabled", True)),
+                        "is_visible": bool(cap.get("is_visible", True)),
+                        "zone_type": _safe_int(cap.get("zone_type")) if _safe_int(cap.get("zone_type")) is not None else -1,
+                        "is_control_point": bool(cap.get("is_control_point", False)),
+                        "timer_name": str(cap.get("timer_name") or "").strip(),
+                        "zone_params_id": _safe_int(cap.get("zone_params_id")) if _safe_int(cap.get("zone_params_id")) is not None else -1,
+                        "zone_visual_id": _safe_int(cap.get("zone_visual_id")) if _safe_int(cap.get("zone_visual_id")) is not None else -1,
+                        "zone_drop_id": _safe_int(cap.get("zone_drop_id")) if _safe_int(cap.get("zone_drop_id")) is not None else -1,
+                    }
+                )
+        caps.sort(
+            key=lambda item: (
+                0 if bool(item.get("is_control_point", False)) else 1,
+                int(item.get("index", -1)),
+                int(item.get("zone_type", -1)),
+                int(item.get("entity_id", 0)),
+            )
+        )
+
+        scores: Dict[str, int] = {}
+        team_scores_raw = row.get("team_scores", {})
+        if isinstance(team_scores_raw, dict):
+            for k, v in team_scores_raw.items():
+                team_id = _safe_int(k)
+                score = _safe_int(v)
+                if team_id is None or score is None:
+                    continue
+                scores[str(team_id)] = score
+
+        timeline.append(
+            {
+                "time_s": float(row.get("time_s", 0.0) or 0.0),
+                "team_scores": scores,
+                "team_win_score": _safe_int(row.get("team_win_score")) or 0,
+                "caps": caps,
+                "time_left_s": _safe_float(row.get("time_left_s"), 0.0) if row.get("time_left_s") is not None else None,
+                "time_elapsed_s": _safe_float(row.get("time_elapsed_s"), 0.0) if row.get("time_elapsed_s") is not None else None,
+            }
+        )
+    timeline.sort(key=lambda item: float(item.get("time_s", 0.0)))
+    return timeline
+
+
+def _estimate_battle_start_from_timer(
+    timeline: list[Dict[str, Any]],
+    full_length_s: Optional[float] = None,
+    use_first_tick: bool = False,
+) -> Optional[float]:
+    if not timeline:
+        return None
+    left_samples: list[tuple[float, float]] = []
+    elapsed_samples: list[tuple[float, float]] = []
+    for row in timeline:
+        if not isinstance(row, dict):
+            continue
+        t = _safe_float(row.get("time_s"), 0.0)
+        tl = row.get("time_left_s")
+        if tl is not None:
+            tl_v = _safe_float(tl, 0.0)
+            if tl_v > 0.0:
+                left_samples.append((t, tl_v))
+        te = row.get("time_elapsed_s")
+        if te is not None:
+            te_v = _safe_float(te, 0.0)
+            if te_v >= 0.0:
+                elapsed_samples.append((t, te_v))
+
+    if left_samples:
+        left_samples.sort(key=lambda item: item[0])
+        max_left = max(tl for _, tl in left_samples)
+        if use_first_tick:
+            for t, tl in left_samples:
+                if tl <= (max_left - 0.5):
+                    return float(t)
+        baseline = float(full_length_s) if full_length_s is not None and full_length_s > 0.0 else float(max_left)
+        candidates = [t - max(0.0, baseline - tl) for t, tl in left_samples]
+        return _median_value(candidates)
+
+    if elapsed_samples:
+        elapsed_samples.sort(key=lambda item: item[0])
+        candidates = [t - te for t, te in elapsed_samples]
+        return _median_value(candidates)
+
+    return None
+
+
+def _normalize_smoke_timeline(raw_timeline: Any) -> list[Dict[str, Any]]:
+    if not isinstance(raw_timeline, list):
+        return []
+    timeline: list[Dict[str, Any]] = []
+    for row in raw_timeline:
+        if not isinstance(row, dict):
+            continue
+        smokes_raw = row.get("smokes", [])
+        smokes: list[Dict[str, Any]] = []
+        if isinstance(smokes_raw, list):
+            for smoke in smokes_raw:
+                if not isinstance(smoke, dict):
+                    continue
+                smokes.append(
+                    {
+                        "entity_id": _safe_int(smoke.get("entity_id")) or 0,
+                        "index": _safe_int(smoke.get("index")) if _safe_int(smoke.get("index")) is not None else -1,
+                        "x": float(smoke.get("x", 0.0) or 0.0),
+                        "z": float(smoke.get("z", 0.0) or 0.0),
+                        "radius": float(smoke.get("radius", 0.0) or 0.0),
+                        "height": float(smoke.get("height", 0.0) or 0.0),
+                        "active": bool(smoke.get("active", True)),
+                    }
+                )
+        smokes.sort(key=lambda item: (int(item.get("entity_id", 0)), int(item.get("index", 0))))
+        timeline.append(
+            {
+                "time_s": float(row.get("time_s", 0.0) or 0.0),
+                "smokes": smokes,
+            }
+        )
+    timeline.sort(key=lambda item: float(item.get("time_s", 0.0)))
+    return timeline
+
+
+def _normalize_smoke_puffs(raw_puffs: Any) -> list[Dict[str, Any]]:
+    if not isinstance(raw_puffs, list):
+        return []
+    puffs: list[Dict[str, Any]] = []
+    for puff in raw_puffs:
+        if not isinstance(puff, dict):
+            continue
+        start_time = float(puff.get("start_time", puff.get("time_s", 0.0)) or 0.0)
+        duration_s = float(puff.get("duration_s", 0.0) or 0.0)
+        end_time = float(puff.get("end_time", start_time + duration_s) or 0.0)
+        puffs.append(
+            {
+                "entity_id": _safe_int(puff.get("entity_id")) or 0,
+                "index": _safe_int(puff.get("index")) if _safe_int(puff.get("index")) is not None else -1,
+                "x": float(puff.get("x", 0.0) or 0.0),
+                "z": float(puff.get("z", 0.0) or 0.0),
+                "radius": float(puff.get("radius", 0.0) or 0.0),
+                "height": float(puff.get("height", 0.0) or 0.0),
+                "start_time": round(start_time, 3),
+                "duration_s": round(duration_s, 3),
+                "end_time": round(end_time, 3),
+            }
+        )
+    puffs.sort(key=lambda item: (float(item.get("start_time", 0.0)), int(item.get("entity_id", 0)), int(item.get("index", 0))))
+    return puffs
+
+
+def _normalize_sensor_events(raw_events: Any) -> list[Dict[str, Any]]:
+    if not isinstance(raw_events, list):
+        return []
+    out: list[Dict[str, Any]] = []
+    for row in raw_events:
+        if not isinstance(row, dict):
+            continue
+        kind = str(row.get("kind") or "").strip().lower()
+        if kind not in ("radar", "hydro"):
+            continue
+        entity_id = _safe_int(row.get("entity_id"))
+        if entity_id is None or entity_id < 0:
+            continue
+        radius = _safe_float(row.get("radius"), 0.0)
+        if radius <= 0.0:
+            continue
+        start_time = _safe_float(row.get("start_time"), 0.0)
+        duration_s = _safe_float(row.get("duration_s"), 0.0)
+        end_time = _safe_float(row.get("end_time"), 0.0)
+        if end_time <= 0.0 and duration_s > 0.0:
+            end_time = start_time + duration_s
+        if end_time <= start_time:
+            continue
+        out.append(
+            {
+                "entity_id": int(entity_id),
+                "kind": kind,
+                "radius": round(float(radius), 3),
+                "start_time": round(float(start_time), 3),
+                "end_time": round(float(end_time), 3),
+                "duration_s": round(float(max(0.0, end_time - start_time)), 3),
+                "confidence": str(row.get("confidence") or ""),
+                "confidence_reason": str(row.get("confidence_reason") or ""),
+                "consumable_type": _safe_int(row.get("consumable_type")) if _safe_int(row.get("consumable_type")) is not None else -1,
+            }
+        )
+    out.sort(key=lambda item: (float(item.get("start_time", 0.0)), int(item.get("entity_id", -1)), str(item.get("kind", ""))))
+    return out
+
+
+def _normalize_consumable_events(raw_events: Any) -> list[Dict[str, Any]]:
+    if not isinstance(raw_events, list):
+        return []
+    out: list[Dict[str, Any]] = []
+    for row in raw_events:
+        if not isinstance(row, dict):
+            continue
+        kind = str(row.get("kind") or "").strip().lower()
+        if kind not in ("heal", "engine", "smoke", "unknown"):
+            continue
+        entity_id = _safe_int(row.get("entity_id"))
+        if entity_id is None or entity_id < 0:
+            continue
+        start_time = _safe_float(row.get("start_time"), 0.0)
+        duration_s = _safe_float(row.get("duration_s"), 0.0)
+        end_time = _safe_float(row.get("end_time"), 0.0)
+        if end_time <= 0.0 and duration_s > 0.0:
+            end_time = start_time + duration_s
+        if end_time <= start_time:
+            continue
+        out.append(
+            {
+                "entity_id": int(entity_id),
+                "kind": kind,
+                "start_time": round(float(start_time), 3),
+                "end_time": round(float(end_time), 3),
+                "duration_s": round(float(max(0.0, end_time - start_time)), 3),
+            }
+        )
+    out.sort(key=lambda item: (float(item.get("start_time", 0.0)), int(item.get("entity_id", -1)), str(item.get("kind", ""))))
+    return out
+
+
+def _normalize_minimap_vision_initial(raw_value: Any) -> Dict[str, Any]:
+    if not isinstance(raw_value, dict):
+        return {"time_s": 0.0, "entries": []}
+    entries_raw = raw_value.get("entries", [])
+    entries: list[Dict[str, int]] = []
+    if isinstance(entries_raw, list):
+        for row in entries_raw:
+            if not isinstance(row, dict):
+                continue
+            entity_id = _safe_int(row.get("entity_id"))
+            packed_data = _safe_int(row.get("packed_data"))
+            if entity_id is None or packed_data is None:
+                continue
+            entries.append({"entity_id": int(entity_id), "packed_data": int(packed_data)})
+    entries.sort(key=lambda item: int(item.get("entity_id", -1)))
+    return {
+        "time_s": round(_safe_float(raw_value.get("time_s"), 0.0), 3),
+        "entries": entries,
+    }
+
+
+def _normalize_minimap_vision_timeline(raw_value: Any) -> list[Dict[str, Any]]:
+    if not isinstance(raw_value, list):
+        return []
+    timeline: list[Dict[str, Any]] = []
+    for row in raw_value:
+        if not isinstance(row, dict):
+            continue
+        snapshot = _normalize_minimap_vision_initial(row)
+        entries = snapshot.get("entries", [])
+        if not entries:
+            continue
+        timeline.append(
+            {
+                "time_s": round(_safe_float(snapshot.get("time_s"), 0.0), 3),
+                "entries": entries,
+            }
+        )
+    timeline.sort(key=lambda item: float(item.get("time_s", 0.0)))
+    return timeline
+
+
+def _heal_events_from_health(timeline: list[Dict[str, Any]]) -> list[Dict[str, Any]]:
+    if not timeline:
+        return []
+    events: list[Dict[str, Any]] = []
+    last_hp: Dict[str, int] = {}
+    active: Dict[str, Dict[str, float]] = {}
+    times = [float(snap.get("time_s", 0.0) or 0.0) for snap in timeline if isinstance(snap, dict)]
+    gap_s = 2.5
+    tail_s = 2.0
+    for snap in timeline:
+        if not isinstance(snap, dict):
+            continue
+        t = float(snap.get("time_s", 0.0) or 0.0)
+        entities = snap.get("entities", {})
+        if not isinstance(entities, dict):
+            continue
+        for entity_key, state in entities.items():
+            if not isinstance(state, dict):
+                continue
+            hp = _safe_int(state.get("hp")) or 0
+            alive = bool(state.get("alive", True))
+            prev = last_hp.get(entity_key)
+            last_hp[entity_key] = hp
+            if not alive:
+                if entity_key in active:
+                    info = active.pop(entity_key)
+                    end_t = max(info["last_t"] + tail_s, t)
+                    events.append({"entity_id": _safe_int(entity_key) or -1, "kind": "heal", "start_time": info["start_t"], "end_time": end_t})
+                continue
+            if prev is None:
+                continue
+            if hp > prev:
+                info = active.get(entity_key)
+                if info is None:
+                    active[entity_key] = {"start_t": t, "last_t": t}
+                else:
+                    info["last_t"] = t
+            else:
+                info = active.get(entity_key)
+                if info is None:
+                    continue
+                if (t - info["last_t"]) >= gap_s:
+                    end_t = info["last_t"] + tail_s
+                    events.append({"entity_id": _safe_int(entity_key) or -1, "kind": "heal", "start_time": info["start_t"], "end_time": end_t})
+                    active.pop(entity_key, None)
+
+    for entity_key, info in active.items():
+        end_t = info["last_t"] + tail_s
+        events.append({"entity_id": _safe_int(entity_key) or -1, "kind": "heal", "start_time": info["start_t"], "end_time": end_t})
+    normalized: list[Dict[str, Any]] = []
+    for row in events:
+        entity_id = _safe_int(row.get("entity_id"))
+        if entity_id is None or entity_id < 0:
+            continue
+        start_time = _safe_float(row.get("start_time"), 0.0)
+        end_time = _safe_float(row.get("end_time"), 0.0)
+        if end_time <= start_time:
+            continue
+        normalized.append(
+            {
+                "entity_id": int(entity_id),
+                "kind": "heal",
+                "start_time": round(float(start_time), 3),
+                "end_time": round(float(end_time), 3),
+                "duration_s": round(float(max(0.0, end_time - start_time)), 3),
+            }
+        )
+    normalized.sort(key=lambda item: (float(item.get("start_time", 0.0)), int(item.get("entity_id", -1))))
+    return normalized
+
+
+def _normalize_artillery_fires(raw_fires: Any) -> list[Dict[str, Any]]:
+    if not isinstance(raw_fires, list):
+        return []
+    fires: list[Dict[str, Any]] = []
+    for row in raw_fires:
+        if not isinstance(row, dict):
+            continue
+        t0 = float(row.get("time_s", 0.0) or 0.0)
+        t1 = float(row.get("time_end_s", t0) or t0)
+        if t1 < t0:
+            t1 = t0
+        fires.append(
+            {
+                "kind": "artillery_trace",
+                "shooter_entity_key": str(_safe_int(row.get("shooter_entity_id")) or -1),
+                "shot_id": _safe_int(row.get("shot_id")) or -1,
+                "time_s": t0,
+                "time_end_s": t1,
+                "params_id": _safe_int(row.get("params_id")) or -1,
+                "battery_kind": str(row.get("battery_kind") or "").strip().lower(),
+                "shell_kind": str(row.get("shell_kind") or "").strip().lower(),
+                "x0": float(row.get("x0", 0.0) or 0.0),
+                "z0": float(row.get("z0", 0.0) or 0.0),
+                "x1": float(row.get("x1", 0.0) or 0.0),
+                "z1": float(row.get("z1", 0.0) or 0.0),
+            }
+        )
+    fires.sort(key=lambda item: (float(item.get("time_s", 0.0)), int(item.get("shot_id", -1))))
+    return fires
+
+
+def _team_side_for_team_label(team_label: Any) -> str:
+    s = str(team_label or "").lower()
+    if s in ("player", "ally"):
+        return "friendly"
+    if s == "enemy":
+        return "enemy"
+    return "unknown"
+
+
+def _team_label_for_team_id(team_id: Optional[int], local_team_id: Optional[int], enemy_team_id: Optional[int]) -> str:
+    if team_id is None or team_id < 0:
+        return "unknown"
+    if local_team_id is not None and team_id == local_team_id:
+        return "ally"
+    if enemy_team_id is not None and team_id == enemy_team_id:
+        return "enemy"
+    return "unknown"
+
+
+def _normalize_torpedo_points(raw_points: Any, owner_team: Dict[str, str]) -> list[Dict[str, Any]]:
+    if not isinstance(raw_points, list):
+        return []
+    points: list[Dict[str, Any]] = []
+    for row in raw_points:
+        if not isinstance(row, dict):
+            continue
+        owner_id = _safe_int(row.get("owner_entity_id"))
+        owner_key = str(owner_id) if owner_id is not None else "-1"
+        team_label = owner_team.get(owner_key, "unknown")
+        point = {
+            "owner_entity_key": owner_key,
+            "torpedo_id": _safe_int(row.get("torpedo_id")) or -1,
+            "time_s": float(row.get("time_s", 0.0) or 0.0),
+            "x": float(row.get("x", 0.0) or 0.0),
+            "z": float(row.get("z", 0.0) or 0.0),
+            "team": team_label,
+            "team_side": _team_side_for_team_label(team_label),
+        }
+        dir_x = row.get("dir_x")
+        dir_z = row.get("dir_z")
+        if dir_x is not None and dir_z is not None:
+            point["dir_x"] = float(dir_x)
+            point["dir_z"] = float(dir_z)
+        params_id = _safe_int(row.get("params_id"))
+        if params_id is not None:
+            point["params_id"] = int(params_id)
+        salvo_id = _safe_int(row.get("salvo_id"))
+        if salvo_id is not None:
+            point["salvo_id"] = int(salvo_id)
+        points.append(point)
+    points.sort(
+        key=lambda item: (
+            float(item.get("time_s", 0.0)),
+            str(item.get("owner_entity_key", "")),
+            int(item.get("torpedo_id", -1)),
+        )
+    )
+    return points
+
+
+def _normalize_squadrons(raw_events: Any, local_team_id: Optional[int], enemy_team_id: Optional[int]) -> list[Dict[str, Any]]:
+    if not isinstance(raw_events, list):
+        return []
+    events: list[Dict[str, Any]] = []
+    for row in raw_events:
+        if not isinstance(row, dict):
+            continue
+        team_id = _safe_int(row.get("team_id"))
+        team_label = _team_label_for_team_id(team_id, local_team_id, enemy_team_id)
+        events.append(
+            {
+                "time_s": float(row.get("time_s", 0.0) or 0.0),
+                "event": str(row.get("event") or "update"),
+                "squadron_id": _safe_int(row.get("squadron_id")) or -1,
+                "params_id": _safe_int(row.get("params_id")) or -1,
+                "x": float(row.get("x", 0.0) or 0.0) if row.get("x") is not None else None,
+                "z": float(row.get("z", 0.0) or 0.0) if row.get("z") is not None else None,
+                "team_id": team_id if team_id is not None else -1,
+                "team": team_label,
+                "team_side": _team_side_for_team_label(team_label),
+                "visible": bool(row.get("visible", True)),
+            }
+        )
+    events.sort(key=lambda item: (float(item.get("time_s", 0.0)), int(item.get("squadron_id", -1)), str(item.get("event", ""))))
+    return events
+
+
+def _normalize_kill_feed(raw_kills: Any) -> list[Dict[str, Any]]:
+    if not isinstance(raw_kills, list):
+        return []
+    kills: list[Dict[str, Any]] = []
+    for row in raw_kills:
+        if not isinstance(row, dict):
+            continue
+        killer_entity_id = _safe_int(row.get("killer_entity_id"))
+        victim_entity_id = _safe_int(row.get("victim_entity_id"))
+        if victim_entity_id is None:
+            continue
+        kills.append(
+            {
+                "time_s": float(row.get("time_s", 0.0) or 0.0),
+                "killer_entity_key": str(killer_entity_id if killer_entity_id is not None else -1),
+                "victim_entity_key": str(victim_entity_id),
+                "reason_code": _safe_int(row.get("reason_code")) or -1,
+                "cause_param_id": _safe_int(row.get("cause_param_id")) or -1,
+                "weapon_kind": str(row.get("weapon_kind") or "other"),
+                "weapon_label": str(row.get("weapon_label") or "KILL"),
+                "shell_kind": str(row.get("shell_kind") or "").strip().lower(),
+            }
+        )
+    kills.sort(key=lambda item: (float(item.get("time_s", 0.0)), str(item.get("victim_entity_key", ""))))
+    return kills
+
+
+def _normalize_chat_feed(raw_chat: Any) -> list[Dict[str, Any]]:
+    if not isinstance(raw_chat, list):
+        return []
+    chat: list[Dict[str, Any]] = []
+    for row in raw_chat:
+        if not isinstance(row, dict):
+            continue
+        message = str(row.get("message") or "").strip()
+        if not message or _looks_serialized_chat_blob(message):
+            continue
+        chat.append(
+            {
+                "time_s": float(row.get("time_s", 0.0) or 0.0),
+                "sender": str(row.get("sender") or "").strip(),
+                "message": message,
+            }
+        )
+    chat.sort(key=lambda item: (float(item.get("time_s", 0.0)), str(item.get("sender", ""))))
+    return chat
+
+
+def _normalize_health_timeline(raw_timeline: Any) -> list[Dict[str, Any]]:
+    if not isinstance(raw_timeline, list):
+        return []
+    timeline: list[Dict[str, Any]] = []
+    for row in raw_timeline:
+        if not isinstance(row, dict):
+            continue
+        entities_raw = row.get("entities", {})
+        entities: Dict[str, Dict[str, Any]] = {}
+        if isinstance(entities_raw, dict):
+            for entity_key, state in entities_raw.items():
+                if not isinstance(state, dict):
+                    continue
+                entities[str(entity_key)] = {
+                    "hp": max(0, _safe_int(state.get("hp")) or 0),
+                    "max_hp": max(0, _safe_int(state.get("max_hp")) or 0),
+                    "alive": bool(state.get("alive", True)),
+                    "on_fire": bool(state.get("on_fire", False)),
+                    "flooding": bool(state.get("flooding", False)),
+                    "restorable_hp": max(0, _safe_int(state.get("restorable_hp")) or 0),
+                    "regenerated_hp": max(0, _safe_int(state.get("regenerated_hp")) or 0),
+                }
+        if not entities:
+            continue
+        timeline.append(
+            {
+                "time_s": float(row.get("time_s", 0.0) or 0.0),
+                "entities": entities,
+            }
+        )
+    timeline.sort(key=lambda item: float(item.get("time_s", 0.0)))
+    return timeline
+
+
+def _normalize_player_status_timeline(raw_timeline: Any) -> list[Dict[str, Any]]:
+    if not isinstance(raw_timeline, list):
+        return []
+    timeline: list[Dict[str, Any]] = []
+    for row in raw_timeline:
+        if not isinstance(row, dict):
+            continue
+        ribbons_raw = row.get("ribbons", {})
+        ribbons: Dict[str, int] = {}
+        if isinstance(ribbons_raw, dict):
+            for ribbon_id, count in ribbons_raw.items():
+                rid = _safe_int(ribbon_id)
+                cnt = _safe_int(count)
+                if rid is None or cnt is None or cnt <= 0:
+                    continue
+                ribbons[str(rid)] = cnt
+        timeline.append(
+            {
+                "time_s": float(row.get("time_s", 0.0) or 0.0),
+                "avatar_entity_id": _safe_int(row.get("avatar_entity_id")) or -1,
+                "ship_entity_key": str(_safe_int(row.get("ship_entity_id")) or -1),
+                "ship_id": _safe_int(row.get("ship_params_id")) or -1,
+                "team_id": _safe_int(row.get("team_id")) if _safe_int(row.get("team_id")) is not None else -1,
+                "player_name": str(row.get("player_name") or "").strip(),
+                "max_health": max(0, _safe_int(row.get("max_health")) or 0),
+                "damage_total": float(row.get("damage_total", 0.0) or 0.0),
+                "potential_damage": float(row.get("potential_damage", 0.0) or 0.0),
+                "spotting_damage": float(row.get("spotting_damage", 0.0) or 0.0),
+                "ribbons": ribbons,
+            }
+        )
+    timeline.sort(key=lambda item: float(item.get("time_s", 0.0)))
+    return timeline
+
+
+def _build_canonical(extraction) -> Dict[str, Any]:
+    def _session_team(relation: Any) -> str:
+        mapping = {0: "player", 1: "ally", 2: "enemy", "player": "player", "ally": "ally", "enemy": "enemy"}
+        return mapping.get(relation, "unknown")
+
+    meta = dict(extraction.meta or {})
+    map_id = meta.get("mapId")
+    arena_entry = get_battlearena_entry(map_id)
+    if arena_entry:
+        meta["map_name_resolved"] = arena_entry.get("name")
+        meta["map_icon_url"] = arena_entry.get("icon")
+        meta["battle_arena_id"] = arena_entry.get("battle_arena_id", map_id)
+    else:
+        meta["map_name_resolved"] = get_map_name(meta.get("mapDisplayName"), map_id)
+
+    entities: Dict[str, Dict[str, Any]] = {}
+    tracks: Dict[str, Dict[str, Any]] = {}
+
+    def _attach_loadout_details(target: Dict[str, Any], row: Dict[str, Any]) -> None:
+        captain_skills = row.get("captain_skills")
+        if isinstance(captain_skills, dict):
+            target["captain_skills"] = {
+                "crew_id": _safe_int(captain_skills.get("crew_id")),
+                "learned_skills": {
+                    str(ship_type): [str(skill) for skill in skills if skill]
+                    for ship_type, skills in captain_skills.get("learned_skills", {}).items()
+                    if isinstance(skills, list) and any(skills)
+                },
+            }
+
+        crew_params = row.get("crewParams")
+        if isinstance(crew_params, list):
+            target["crew_params"] = list(crew_params)
+
+        ship_components = row.get("shipComponents")
+        if isinstance(ship_components, dict):
+            target["ship_build"] = {
+                "components": {str(name): value for name, value in ship_components.items()}
+            }
+            ship_config_dump_hex = row.get("shipConfigDumpHex")
+            if ship_config_dump_hex:
+                target["ship_build"]["config_dump_hex"] = str(ship_config_dump_hex)
+            ship_params_id = _safe_int(row.get("shipId"))
+            if ship_params_id is None:
+                ship_params_id = _safe_int(target.get("ship_id"))
+            if ship_params_id is not None:
+                target["ship_build"]["ship_id"] = ship_params_id
+
+    for entity_id, track in extraction.tracks.items():
+        key = str(entity_id)
+        entities[key] = {
+            "entity_id": entity_id,
+            "account_entity_id": track.account_entity_id,
+            "player_name": track.player_name,
+            "clan_tag": track.clan_tag,
+            "team": track.team,
+            "ship_id": track.ship_id,
+            "sunk": False,
+            "death_time": None,
+        }
+        session_row = (getattr(extraction, "session_map", {}) or {}).get(entity_id)
+        if isinstance(session_row, dict):
+            _attach_loadout_details(entities[key], session_row)
+        tracks[key] = {
+            "entity_id": entity_id,
+            "player_name": track.player_name,
+            "clan_tag": track.clan_tag,
+            "ship_id": track.ship_id,
+            "team": track.team,
+            "points": [
+                {
+                    "t": p.t,
+                    "x": p.x,
+                    "y": p.y,
+                    "z": p.z,
+                    "yaw": p.yaw,
+                    "pitch": p.pitch,
+                    "roll": p.roll,
+                }
+                for p in track.points
+            ],
+        }
+
+    for entity_id, row in (getattr(extraction, "session_map", {}) or {}).items():
+        key = str(entity_id)
+        if key in entities:
+            continue
+        if not isinstance(row, dict):
+            continue
+        entities[key] = {
+            "entity_id": _safe_int(entity_id) or -1,
+            "account_entity_id": _safe_int(row.get("id")),
+            "player_name": str(row.get("name") or f"entity_{key}").strip(),
+            "team": _session_team(row.get("relation")),
+            "ship_id": _safe_int(row.get("shipId")),
+            "sunk": False,
+            "death_time": None,
+        }
+        _attach_loadout_details(entities[key], row)
+    owner_team = {str(entity_id): str(track.team or "unknown") for entity_id, track in extraction.tracks.items()}
+
+    deaths = []
+    for d in extraction.deaths:
+        key = str(d.entity_id)
+        deaths.append({"entity_key": key, "time_s": d.t})
+        if key in entities and (entities[key].get("death_time") is None or d.t < float(entities[key]["death_time"])):
+            entities[key]["death_time"] = d.t
+            entities[key]["sunk"] = True
+
+    battle_end_s = max((p["t"] for t in tracks.values() for p in t.get("points", [])), default=0.0)
+    min_ally_t = None
+    min_any_t = None
+    for track in tracks.values():
+        points = track.get("points", [])
+        if not isinstance(points, list) or not points:
+            continue
+        team = str(track.get("team") or "").lower()
+        for point in points:
+            if not isinstance(point, dict):
+                continue
+            t_raw = point.get("t")
+            if t_raw is None:
+                continue
+            t = _safe_float(t_raw, 0.0)
+            if min_any_t is None or t < min_any_t:
+                min_any_t = t
+            if team in ("ally", "player"):
+                if min_ally_t is None or t < min_ally_t:
+                    min_ally_t = t
+    if min_ally_t is None:
+        min_ally_t = min_any_t
+
+    battle_state = extraction.battle_state or {}
+    captures_timeline = _normalize_capture_timeline(battle_state.get("captures_timeline", []))
+    smoke_timeline = _normalize_smoke_timeline(battle_state.get("smoke_timeline", []))
+    smoke_puffs = _normalize_smoke_puffs(battle_state.get("smoke_puffs", []))
+    sensor_events = _normalize_sensor_events(battle_state.get("sensor_events", []))
+    raw_consumable_events = _normalize_consumable_events(battle_state.get("consumable_events", []))
+    artillery_fires = _normalize_artillery_fires(battle_state.get("artillery_shots", []))
+    torpedo_points = _normalize_torpedo_points(battle_state.get("torpedo_points", []), owner_team)
+    kill_feed = _normalize_kill_feed(battle_state.get("kill_feed", []))
+    chat_feed = _normalize_chat_feed(battle_state.get("chat_messages", []))
+    health_timeline = _normalize_health_timeline(battle_state.get("health_timeline", []))
+    player_status_timeline = _normalize_player_status_timeline(battle_state.get("player_status_timeline", []))
+    control_points = _normalize_control_points(battle_state.get("control_points", []))
+    minimap_vision_initial = _normalize_minimap_vision_initial(battle_state.get("minimap_vision_initial", {}))
+    minimap_vision_timeline = _normalize_minimap_vision_timeline(battle_state.get("minimap_vision_timeline", []))
+    local_team_id = _safe_int(battle_state.get("local_team_id"))
+    enemy_team_id = _safe_int(battle_state.get("enemy_team_id"))
+    squadron_events = _normalize_squadrons(battle_state.get("squadrons", []), local_team_id, enemy_team_id)
+    player_status_meta = battle_state.get("player_status_meta", {}) if isinstance(battle_state.get("player_status_meta"), dict) else {}
+    consumable_kinds_by_entity = _normalize_consumable_kinds_by_entity(
+        battle_state.get("consumable_kinds_by_entity", {})
+    )
+
+    max_left = None
+    for snap in captures_timeline:
+        if not isinstance(snap, dict):
+            continue
+        tl = snap.get("time_left_s")
+        if tl is None:
+            continue
+        tl_v = _safe_float(tl, 0.0)
+        if max_left is None or tl_v > max_left:
+            max_left = tl_v
+
+
+
+
+
+    full_length_s = 1200.0
+    if max_left is not None and max_left > full_length_s:
+        full_length_s = float(max_left)
+    use_first_tick = bool(max_left is not None and max_left >= (full_length_s - 1.0))
+
+    battle_start_s = 0.0
+    start_from_timer = _estimate_battle_start_from_timer(captures_timeline, full_length_s, use_first_tick)
+    if start_from_timer is not None:
+        battle_start_s = max(0.0, float(start_from_timer))
+    elif min_ally_t is not None:
+        battle_start_s = max(0.0, float(min_ally_t))
+    if battle_end_s > 0.0 and (battle_end_s - battle_start_s) > 1200.0:
+        battle_start_s = max(0.0, float(battle_end_s) - 1200.0)
+
+    speed_samples = _speed_samples_from_tracks(tracks)
+    heal_from_hp = _heal_events_from_health(health_timeline)
+    smoke_from_puffs = _smoke_deploy_events(smoke_puffs)
+    consumable_events: list[Dict[str, Any]] = []
+    for raw in raw_consumable_events:
+        row = dict(raw)
+        kind = str(row.get("kind") or "").lower()
+        entity_id = _safe_int(row.get("entity_id"))
+        start_time = _safe_float(row.get("start_time"), 0.0)
+        end_time = _safe_float(row.get("end_time"), 0.0)
+        if entity_id is None or end_time <= start_time:
+            continue
+        if kind in ("engine", "heal", "smoke") and consumable_kinds_by_entity:
+            if not _ship_allows_consumable(consumable_kinds_by_entity, int(entity_id), kind):
+                continue
+        if kind == "unknown":
+            if heal_from_hp:
+                window = _find_overlap_window(heal_from_hp, int(entity_id), start_time, end_time)
+                if window is not None:
+                    if consumable_kinds_by_entity and not _ship_allows_consumable(consumable_kinds_by_entity, int(entity_id), "heal"):
+                        continue
+                    start_t, end_t = window
+                    row["kind"] = "heal"
+                    row["start_time"] = round(float(start_t), 3)
+                    row["end_time"] = round(float(end_t), 3)
+                    row["duration_s"] = round(float(max(0.0, end_t - start_t)), 3)
+                    consumable_events.append(row)
+                    continue
+            samples = speed_samples.get(str(entity_id), [])
+            window = _speed_boost_window(samples, start_time, end_time) if samples else None
+            if window is not None:
+                if consumable_kinds_by_entity and not _ship_allows_consumable(consumable_kinds_by_entity, int(entity_id), "engine"):
+                    continue
+                start_t, end_t = window
+                row["kind"] = "engine"
+                row["start_time"] = round(float(start_t), 3)
+                row["end_time"] = round(float(end_t), 3)
+                row["duration_s"] = round(float(max(0.0, end_t - start_t)), 3)
+                consumable_events.append(row)
+                continue
+            continue
+        if kind == "heal" and heal_from_hp:
+            window = _find_overlap_window(heal_from_hp, int(entity_id), start_time, end_time)
+            if window is not None:
+                start_t, end_t = window
+                row["start_time"] = round(float(start_t), 3)
+                row["end_time"] = round(float(end_t), 3)
+                row["duration_s"] = round(float(max(0.0, end_t - start_t)), 3)
+        elif kind == "engine":
+            samples = speed_samples.get(str(entity_id), [])
+            window = _speed_boost_window(samples, start_time, end_time) if samples else None
+            if window is not None:
+                start_t, end_t = window
+                row["start_time"] = round(float(start_t), 3)
+                row["end_time"] = round(float(end_t), 3)
+                row["duration_s"] = round(float(max(0.0, end_t - start_t)), 3)
+        consumable_events.append(row)
+
+    speed_engine = _engine_events_from_speed_samples(
+        speed_samples,
+        entities,
+        allowed_kinds_by_entity=consumable_kinds_by_entity,
+    )
+    for row in speed_engine:
+        entity_id = _safe_int(row.get("entity_id"))
+        if entity_id is None:
+            continue
+        start_time = _safe_float(row.get("start_time"), 0.0)
+        end_time = _safe_float(row.get("end_time"), 0.0)
+        if end_time <= start_time:
+            continue
+        overlap = False
+        for existing in consumable_events:
+            if existing.get("kind") != "engine":
+                continue
+            if int(existing.get("entity_id", -1)) != int(entity_id):
+                continue
+            e0 = _safe_float(existing.get("start_time"), 0.0)
+            e1 = _safe_float(existing.get("end_time"), 0.0)
+            if e1 < start_time or e0 > end_time:
+                continue
+            overlap = True
+            break
+        if not overlap:
+            consumable_events.append(row)
+
+    if smoke_from_puffs:
+        for row in smoke_from_puffs:
+            entity_id = _safe_int(row.get("entity_id"))
+            start_time = _safe_float(row.get("start_time"), 0.0)
+            end_time = _safe_float(row.get("end_time"), 0.0)
+            if entity_id is None or end_time <= start_time:
+                continue
+            overlap = False
+            for existing in consumable_events:
+                if existing.get("kind") != "smoke":
+                    continue
+                if int(existing.get("entity_id", -1)) != int(entity_id):
+                    continue
+                e0 = _safe_float(existing.get("start_time"), 0.0)
+                e1 = _safe_float(existing.get("end_time"), 0.0)
+                if e1 < start_time or e0 > end_time:
+                    continue
+                overlap = True
+                break
+            if not overlap:
+                consumable_events.append(row)
+
+    if heal_from_hp:
+        for row in heal_from_hp:
+            entity_id = _safe_int(row.get("entity_id"))
+            start_time = _safe_float(row.get("start_time"), 0.0)
+            end_time = _safe_float(row.get("end_time"), 0.0)
+            if entity_id is None or end_time <= start_time:
+                continue
+            overlap = False
+            for existing in consumable_events:
+                if existing.get("kind") != "heal":
+                    continue
+                if int(existing.get("entity_id", -1)) != int(entity_id):
+                    continue
+                e0 = _safe_float(existing.get("start_time"), 0.0)
+                e1 = _safe_float(existing.get("end_time"), 0.0)
+                if e1 < start_time or e0 > end_time:
+                    continue
+                overlap = True
+                break
+            if not overlap:
+                consumable_events.append(row)
+
+    consumable_events.sort(key=lambda item: (float(item.get("start_time", 0.0)), int(item.get("entity_id", -1)), str(item.get("kind", ""))))
+
+    if consumable_events and sensor_events:
+        filtered_sensors: list[Dict[str, Any]] = []
+        for sensor in sensor_events:
+            if str(sensor.get("confidence") or "").lower() != "low":
+                filtered_sensors.append(sensor)
+                continue
+            if str(sensor.get("confidence_reason") or "") != "duration_only":
+                filtered_sensors.append(sensor)
+                continue
+            entity_id = _safe_int(sensor.get("entity_id"))
+            if entity_id is None:
+                filtered_sensors.append(sensor)
+                continue
+            s0 = _safe_float(sensor.get("start_time"), 0.0)
+            s1 = _safe_float(sensor.get("end_time"), 0.0)
+            overlaps_heal = False
+            for row in consumable_events:
+                if row.get("kind") != "heal":
+                    continue
+                if int(row.get("entity_id", -1)) != int(entity_id):
+                    continue
+                c0 = _safe_float(row.get("start_time"), 0.0)
+                c1 = _safe_float(row.get("end_time"), 0.0)
+                if c1 < s0 or c0 > s1:
+                    continue
+                overlaps_heal = True
+                break
+            if not overlaps_heal:
+                filtered_sensors.append(sensor)
+        sensor_events = filtered_sensors
+
+    if sensor_events and heal_from_hp:
+        filtered_sensors = []
+        for sensor in sensor_events:
+            kind = str(sensor.get("kind") or "").lower()
+            if kind not in ("radar", "hydro"):
+                filtered_sensors.append(sensor)
+                continue
+            entity_id = _safe_int(sensor.get("entity_id"))
+            if entity_id is None:
+                filtered_sensors.append(sensor)
+                continue
+            s0 = _safe_float(sensor.get("start_time"), 0.0)
+            s1 = _safe_float(sensor.get("end_time"), 0.0)
+            if s1 <= s0:
+                continue
+            drop = False
+            for heal in heal_from_hp:
+                if int(heal.get("entity_id", -1)) != int(entity_id):
+                    continue
+                h0 = _safe_float(heal.get("start_time"), 0.0)
+                h1 = _safe_float(heal.get("end_time"), 0.0)
+                if h1 <= h0:
+                    continue
+                ratio = _overlap_ratio(s0, s1, h0, h1)
+                duration_match = abs((s1 - s0) - (h1 - h0)) <= 5.0
+                if ratio >= 0.7 and duration_match:
+                    drop = True
+                    break
+            if not drop:
+                filtered_sensors.append(sensor)
+        sensor_events = filtered_sensors
+
+    if control_points:
+        meta["control_points"] = control_points
+    if local_team_id is not None:
+        meta["local_team_id"] = local_team_id
+    if enemy_team_id is not None:
+        meta["enemy_team_id"] = enemy_team_id
+    player_avatar_entity_id = _safe_int(player_status_meta.get("avatar_entity_id"))
+    player_ship_entity_id = _safe_int(player_status_meta.get("ship_entity_id"))
+    player_ship_id = _safe_int(player_status_meta.get("ship_params_id"))
+    if player_avatar_entity_id is not None and player_avatar_entity_id >= 0:
+        meta["player_avatar_entity_id"] = player_avatar_entity_id
+    if player_ship_entity_id is not None and player_ship_entity_id >= 0:
+        meta["player_ship_entity_id"] = player_ship_entity_id
+    if player_ship_id is not None and player_ship_id >= 0:
+        meta["player_ship_id"] = player_ship_id
+    if minimap_vision_initial.get("entries"):
+        meta["minimap_vision_initial"] = minimap_vision_initial
+    if minimap_vision_timeline:
+        meta["minimap_vision_timeline"] = minimap_vision_timeline
+
+    for snap in health_timeline:
+        entities_raw = snap.get("entities", {})
+        if not isinstance(entities_raw, dict):
+            continue
+        for entity_key, state in entities_raw.items():
+            if entity_key not in entities or not isinstance(state, dict):
+                continue
+            max_hp = max(0, _safe_int(state.get("max_hp")) or 0)
+            hp = max(0, _safe_int(state.get("hp")) or 0)
+            if max_hp > 0:
+                entities[entity_key]["max_hp"] = max_hp
+            entities[entity_key]["initial_hp"] = max(entities[entity_key].get("initial_hp", 0), hp)
+
+    final_scores: Dict[str, int] = {}
+    final_scores_raw = battle_state.get("final_scores", {})
+    if isinstance(final_scores_raw, dict):
+        for key, value in final_scores_raw.items():
+            team_id = _safe_int(key)
+            score = _safe_int(value)
+            if team_id is None or score is None:
+                continue
+            final_scores[str(team_id)] = score
+
+    team_win_score = _safe_int(battle_state.get("team_win_score")) or 0
+
+    data = {
+        "meta": meta,
+        "entities": entities,
+        "tracks": tracks,
+        "events": {
+            "deaths": sorted(deaths, key=lambda item: item["time_s"]),
+            "captures": captures_timeline,
+            "smokes": smoke_timeline,
+            "smoke_puffs": smoke_puffs,
+            "sensors": sensor_events,
+            "consumables": consumable_events,
+            "fires": artillery_fires,
+            "kills": kill_feed,
+            "chat": chat_feed,
+            "health": health_timeline,
+            "player_status": player_status_timeline,
+            "spotting": [],
+            "torpedoes": torpedo_points,
+            "squadrons": squadron_events,
+        },
+        "stats": {
+            "tracked_entities": len(tracks),
+            "track_points": sum(len(t.get("points", [])) for t in tracks.values()),
+            "battle_end_s": battle_end_s,
+            "battle_start_s": battle_start_s,
+            "battle_duration_s": max(0.0, float(battle_end_s) - float(battle_start_s)),
+            "deaths": len(deaths),
+            "kills": len(kill_feed),
+            "chat_messages": len(chat_feed),
+            "health_snapshots": len(health_timeline),
+            "player_status_samples": len(player_status_timeline),
+            "artillery_shots": len(artillery_fires),
+            "torpedo_points": len(torpedo_points),
+            "squadron_events": len(squadron_events),
+            "smoke_snapshots": len(smoke_timeline),
+            "smoke_puffs": len(smoke_puffs) if smoke_puffs else sum(len(s.get("smokes", [])) for s in smoke_timeline),
+            "sensor_events": len(sensor_events),
+            "consumable_events": len(consumable_events),
+            "team_scores_final": final_scores,
+            "team_win_score": team_win_score,
+        },
+        "diagnostics": {
+            **extraction.diagnostics,
+            "packet_counts": extraction.packet_counts,
+        },
+    }
+
+    validation = validate_extraction(data)
+    data["diagnostics"]["validation"] = {
+        "ok": validation.ok,
+        "errors": validation.errors,
+    }
+    return data
+
+
+def extract_replay(input_replay: str, output_json: Optional[str] = None, emit_legacy: bool = False) -> Dict[str, Any]:
+    context = read_replay(input_replay)
+    packets = decode_packets(context)
+    extraction = extract_events(context, packets)
+    canonical = _build_canonical(extraction)
+
+    if output_json:
+        out_path = Path(output_json)
+        out_path.write_text(json.dumps(canonical, indent=2), encoding="utf-8")
+
+    if emit_legacy:
+        legacy = to_legacy_schema(canonical)
+        canonical["legacy"] = legacy
+
+    return canonical
+
+
+def extract_replay_to_files(input_replay: str, canonical_output: str, legacy_output: Optional[str] = None) -> Dict[str, Any]:
+    data = extract_replay(input_replay, canonical_output, emit_legacy=bool(legacy_output))
+    if legacy_output and "legacy" in data:
+        Path(legacy_output).write_text(json.dumps(data["legacy"], indent=2), encoding="utf-8")
+    return data

@@ -1,0 +1,32 @@
+{
+  "Submarine": {
+    "stock": ["hull", "engine"],
+    "fitted": ["artillery", "torpedoes", "pinger", "depthCharges", "sonar", "airDefense", "atba"]
+  },
+  "Destroyer": {
+    "stock": ["hull", "engine", "artillery", "torpedoes"],
+    "fitted": ["fireControl", "airDefense", "atba", "torpedoLaunchers", "radars"]
+  },
+  "Cruiser": {
+    "stock": ["hull", "engine", "artillery", "torpedoes"],
+    "fitted": ["fireControl", "airDefense", "atba", "hydroSearch", "radars", "airArmament"]
+  },
+  "Battleship": {
+    "stock": ["hull", "engine", "artillery", "torpedoes"],
+    "fitted": ["fireControl", "airDefense", "atba", "airArmament", "radars"]
+  },
+  "Aircraft Carrier": {
+    "stock": ["hull", "engine"],
+    "fitted": [
+      "flightControl",
+      "fighter",
+      "torpedoBomber",
+      "diveBomber",
+      "skipBomber",
+      "airDefense",
+      "atba",
+      "airArmament",
+      "airSupport"
+    ]
+  }
+}
