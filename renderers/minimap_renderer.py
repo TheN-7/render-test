@@ -45,10 +45,9 @@ WOWS_WARNING = (255, 184, 96)
 COLOR_BG = WOWS_BG
 COLOR_UNSPOTTED = WOWS_NEUTRAL
 COLOR_SUNK = (90, 90, 90)
-# WoWS replay position units are ~5 metres each (verified via ship top speeds and
-# capture-zone radii). Used to convert real consumable ranges (metres) into the
-# renderer's world-unit space for radar/hydro detection rings.
-METERS_PER_WORLD_UNIT = 5.0
+# Overview-map bounds use 1 world unit per ~30 metres
+# (for example, a 42 km map is 1400 render units wide).
+METERS_PER_WORLD_UNIT = 30.0
 WG_ICON_HEADING_OFFSET_DEG = -90.0
 RENDER_PRESTART_LEAD_S = 5.0
 _MOVEMENT_THRESHOLD = 5.0
@@ -462,6 +461,34 @@ def _ship_has_consumable(ship_id: Any, kind: str) -> bool:
     return any(str(value or "").strip().lower() == target for value in values)
 
 
+def _ship_consumable_range_m(ship_id: Any, kind: str) -> Optional[float]:
+    sid = _safe_int(ship_id)
+    if sid is None:
+        return None
+    target = str(kind or "").strip().lower()
+    if target not in {"radar", "hydro"}:
+        return None
+    payload = _load_ship_consumables_reference()
+    by_ship = payload.get("by_ship_id", {}) if isinstance(payload, dict) else {}
+    entry = by_ship.get(str(int(sid))) if isinstance(by_ship, dict) else None
+    if not isinstance(entry, dict):
+        return None
+    by_kind = entry.get("by_kind", {})
+    rows = by_kind.get(target) if isinstance(by_kind, dict) else None
+    if not isinstance(rows, list):
+        return None
+    ranges: List[float] = []
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        range_m = _safe_float(row.get("dist_ship_m"), 0.0)
+        if range_m > 0.0:
+            ranges.append(float(range_m))
+    if not ranges:
+        return None
+    return max(ranges)
+
+
 def _ship_entry(ship_id: Any) -> Dict[str, Any]:
     cache = _load_ship_cache()
     try:
@@ -778,15 +805,39 @@ def _load_overview_map_sizes() -> Dict[str, float]:
     return size_by_slug
 
 
+def _overview_size_km(slug: str) -> float | None:
+    if not slug:
+        return None
+    sizes = _load_overview_map_sizes()
+    size_km = sizes.get(slug)
+    if size_km is not None:
+        return float(size_km)
+    slug_norm = str(slug).strip().lower()
+    for key, value in sizes.items():
+        key_norm = str(key).strip().lower()
+        if key_norm.endswith(slug_norm) or slug_norm.endswith(key_norm):
+            return float(value)
+    return None
+
+
 def _overview_half_extent(slug: str) -> float | None:
     if not slug:
         return None
-    size_km = _load_overview_map_sizes().get(slug)
+    size_km = _overview_size_km(slug)
     if size_km is None or size_km <= 0.0:
         return None
     # WoWS minimap coordinates map cleanly when one render unit is treated as
     # roughly 30 meters of overview-map size. Example: 42 km -> 1400 wide.
     return float(size_km) * 1000.0 / 60.0
+
+
+def _overview_map_size_m(slug: str) -> float | None:
+    if not slug:
+        return None
+    size_km = _overview_size_km(slug)
+    if size_km is None or size_km <= 0.0:
+        return None
+    return float(size_km) * 1000.0
 
 
 @lru_cache(maxsize=64)
@@ -6217,6 +6268,19 @@ def _extract_sensor_events(canonical: Dict[str, Any]) -> List[Dict[str, Any]]:
     raw = events.get("sensors", [])
     if not isinstance(raw, list):
         return []
+    entities = canonical.get("entities", {}) if isinstance(canonical.get("entities", {}), dict) else {}
+    tracks = canonical.get("tracks", {}) if isinstance(canonical.get("tracks", {}), dict) else {}
+
+    def _ship_id_for_entity(entity_id: int) -> Any:
+        key = str(int(entity_id))
+        entity = entities.get(key) if isinstance(entities, dict) else None
+        if isinstance(entity, dict) and entity.get("ship_id") is not None:
+            return entity.get("ship_id")
+        track = tracks.get(key) if isinstance(tracks, dict) else None
+        if isinstance(track, dict):
+            return track.get("ship_id")
+        return None
+
     out: List[Dict[str, Any]] = []
     for row in raw:
         if not isinstance(row, dict):
@@ -6230,6 +6294,10 @@ def _extract_sensor_events(canonical: Dict[str, Any]) -> List[Dict[str, Any]]:
         radius = _safe_float(row.get("radius"), 0.0)
         start_time = _safe_float(row.get("start_time"), 0.0)
         end_time = _safe_float(row.get("end_time"), 0.0)
+        if radius <= 0.0:
+            fallback_range_m = _ship_consumable_range_m(_ship_id_for_entity(int(entity_id)), kind)
+            if fallback_range_m is not None:
+                radius = float(fallback_range_m)
         if radius <= 0.0 or end_time <= start_time:
             continue
         # Sensor radius is stored in metres; convert to the renderer's world units
@@ -7245,6 +7313,7 @@ def render_static(canonical: Dict[str, Any], canvas_size: int = 1024, show_label
     world_bounds = _world_bounds(canonical)
     margin = _map_margin(canonical)
     map_rect = _map_projection_rect(canonical, canvas_size, margin)
+    map_size_m = _overview_map_size_m(_local_map_slug(canonical))
     death_times = _find_death_times(canonical)
     explicit_death_times = _find_explicit_death_times(canonical)
     render_tracks = _normalize_render_tracks(canonical)
@@ -7296,6 +7365,7 @@ def render_static(canonical: Dict[str, Any], canvas_size: int = 1024, show_label
         map_rect=map_rect,
         spot_timeout=spot_timeout,
         death_times=death_times,
+        map_size_m=map_size_m,
     )
     _draw_torpedoes(draw, torpedo_tracks, battle_end, half, canvas_size, margin, world_bounds=world_bounds, map_rect=map_rect)
     _draw_squadrons(img, draw, squadron_tracks, battle_end, half, canvas_size, margin, world_bounds=world_bounds, map_rect=map_rect)
@@ -7449,6 +7519,7 @@ def _draw_sensor_overlay(
     map_rect: Tuple[int, int, int, int] | None = None,
     spot_timeout: float = 6.0,
     death_times: Dict[str, float] | None = None,
+    map_size_m: float | None = None,
 ) -> None:
     if not sensors:
         return
@@ -7511,10 +7582,14 @@ def _draw_sensor_overlay(
         x = float(state.get("x", 0.0))
         z = float(state.get("z", 0.0))
         radius_world = float(sensor.get("radius", 0.0))
-        if radius_world <= 0.0:
+        range_m = _safe_float(sensor.get("range_m"), 0.0)
+        if radius_world <= 0.0 and range_m <= 0.0:
             continue
         px, py = _to_px(x, z, half, canvas_size, margin, world_bounds=world_bounds, map_rect=map_rect)
-        radius_px = max(6, int(radius_world / max(1e-6, world_span) * usable_span * 0.92))
+        if range_m > 0.0 and map_size_m is not None and map_size_m > 0.0:
+            radius_px = max(6, int(range_m / max(1e-6, float(map_size_m)) * usable_span))
+        else:
+            radius_px = max(6, int(radius_world / max(1e-6, world_span) * usable_span * 0.92))
 
         base = COLOR_FRIENDLY if side == "friendly" else COLOR_ENEMY if side == "enemy" else WOWS_NEUTRAL
         if kind == "radar":
@@ -7667,6 +7742,7 @@ def iter_animation_frames(canonical: Dict[str, Any], canvas_size: int = 600, spe
     world_bounds = _world_bounds(canonical)
     margin = _map_margin(canonical)
     map_rect = _map_projection_rect(canonical, canvas_size, margin)
+    map_size_m = _overview_map_size_m(_local_map_slug(canonical))
     step = max(0.05, float(speed))
     death_times = _find_death_times(canonical)
     explicit_death_times = _find_explicit_death_times(canonical)
@@ -7736,6 +7812,7 @@ def iter_animation_frames(canonical: Dict[str, Any], canvas_size: int = 600, spe
             map_rect=map_rect,
             spot_timeout=spot_timeout,
             death_times=death_times,
+            map_size_m=map_size_m,
         )
         _draw_artillery_traces(img, artillery_traces, t_replay, half, canvas_size, margin, world_bounds=world_bounds, map_rect=map_rect)
         _draw_torpedoes(draw, torpedo_tracks, t_replay, half, canvas_size, margin, world_bounds=world_bounds, map_rect=map_rect)

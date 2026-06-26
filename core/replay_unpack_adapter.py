@@ -563,6 +563,14 @@ def _load_gameparams_consumables() -> Dict[str, Any]:
             dist_torp = _safe_float(logic.get("distTorpedo"), None)
             work_time = _safe_float(val.get("workTime"), None)
             reload_time = _safe_float(val.get("reloadTime"), None)
+            
+            # Radar consumables use 1:1 scale (distShip is already in meters)
+            # Other consumables use the standard game unit scale (30x)
+            if consumable_type == "rls":
+                range_m = float(dist_ship) if dist_ship is not None else None
+            else:
+                range_m = float(dist_ship * 30.0) if dist_ship is not None else None
+            
             variant = {
                 "key": key,
                 "consumable_type": consumable_type,
@@ -571,8 +579,8 @@ def _load_gameparams_consumables() -> Dict[str, Any]:
                 "work_time": work_time,
                 "reload_time": reload_time,
 
-                "range_m": float(dist_ship) if dist_ship is not None else None,
-                "torp_range_m": float(dist_torp) if dist_torp is not None else None,
+                "range_m": range_m,
+                "torp_range_m": float(dist_torp * 30.0) if dist_torp is not None else None,
             }
             variant.update(_parse_variant_key(key))
             if consumable_type == "rls":
@@ -2198,6 +2206,106 @@ def _extract_battle_overlay(
             }
         return _fallback_consumable_params(kind, info)
 
+    def _append_sensor_event(row: Dict[str, Any]) -> None:
+        entity_id = _safe_int(row.get("entity_id"))
+        kind = str(row.get("kind") or "").strip().lower()
+        if entity_id is None or kind not in ("radar", "hydro"):
+            return
+        start_time = _safe_float(row.get("start_time"), 0.0)
+        end_time = _safe_float(row.get("end_time"), 0.0)
+        if end_time <= start_time:
+            return
+        radius = _safe_float(row.get("radius"), 0.0)
+        for existing in sensor_events:
+            if _safe_int(existing.get("entity_id")) != int(entity_id):
+                continue
+            if str(existing.get("kind") or "").strip().lower() != kind:
+                continue
+            old_start = _safe_float(existing.get("start_time"), 0.0)
+            old_end = _safe_float(existing.get("end_time"), 0.0)
+            if min(end_time, old_end) + 1.0 < max(start_time, old_start):
+                continue
+            merged_start = min(old_start, start_time)
+            merged_end = max(old_end, end_time)
+            existing["start_time"] = round(float(merged_start), 3)
+            existing["end_time"] = round(float(merged_end), 3)
+            existing["duration_s"] = round(float(max(0.0, merged_end - merged_start)), 3)
+            if radius > _safe_float(existing.get("radius"), 0.0):
+                existing["radius"] = round(float(radius), 3)
+            if not existing.get("confidence_reason"):
+                existing["confidence_reason"] = str(row.get("confidence_reason") or "")
+            return
+        sensor_events.append(row)
+
+    def _sensor_candidate_from_work_left(entity_id: int, work_left: float) -> Optional[tuple[str, Dict[str, Optional[float]]]]:
+        if work_left <= 0.0:
+            return None
+        candidates: List[tuple[float, str, Dict[str, Optional[float]]]] = []
+        for kind in ("radar", "hydro"):
+            if not _consumable_kind_allowed(int(entity_id), kind):
+                continue
+            params = _lookup_consumable_params(kind, int(entity_id))
+            duration = _safe_float(params.get("duration_s"), 0.0)
+            range_m = _safe_float(params.get("range_m"), 0.0)
+            if duration <= 0.0 or range_m <= 0.0:
+                continue
+            if work_left > duration + max(8.0, duration * 0.12):
+                continue
+            score = abs(duration - work_left) / max(1.0, duration)
+            candidates.append((score, kind, params))
+        if not candidates:
+            return None
+        candidates.sort(key=lambda item: item[0])
+        if len(candidates) > 1 and abs(candidates[0][0] - candidates[1][0]) < 0.08:
+            return None
+        return candidates[0][1], candidates[0][2]
+
+    def _record_active_sensors_from_consumables_snapshot(entity_id: int, data: Any) -> None:
+        if not isinstance(data, dict):
+            return
+        rows = data.get("consumablesDict")
+        if not isinstance(rows, list):
+            return
+        for item in rows:
+            if not isinstance(item, (list, tuple)) or len(item) < 2:
+                continue
+            payload = item[1]
+            if not isinstance(payload, dict):
+                continue
+            lifecycle = payload.get("lifecycleDump")
+            if not isinstance(lifecycle, dict):
+                continue
+            state_id = _safe_int(lifecycle.get("currentStateId"))
+            if state_id != 3:
+                continue
+            context = lifecycle.get("contextDump")
+            if not isinstance(context, dict):
+                continue
+            work_left = _safe_float(context.get("workTimeLeft"), 0.0)
+            candidate = _sensor_candidate_from_work_left(int(entity_id), float(work_left))
+            if candidate is None:
+                continue
+            kind, params = candidate
+            duration = _safe_float(params.get("duration_s"), 0.0)
+            range_m = _safe_float(params.get("range_m"), 0.0)
+            if duration <= 0.0 or range_m <= 0.0:
+                continue
+            start_t = max(0.0, float(packet_time_ref[0]) - max(0.0, duration - float(work_left)))
+            end_t = float(packet_time_ref[0]) + float(work_left)
+            _append_sensor_event(
+                {
+                    "entity_id": int(entity_id),
+                    "kind": kind,
+                    "radius": round(float(range_m), 3),
+                    "start_time": round(float(start_t), 3),
+                    "duration_s": round(float(max(0.0, end_t - start_t)), 3),
+                    "end_time": round(float(end_t), 3),
+                    "consumable_type": -1,
+                    "confidence": "low",
+                    "confidence_reason": "set_consumables_active",
+                }
+            )
+
     def _scan_consumable_defs(obj: Any, entity_id: int) -> None:
         if isinstance(obj, dict):
             kind = _infer_consumable_kind(obj)
@@ -2226,6 +2334,7 @@ def _extract_battle_overlay(
             entries: List[Dict[str, Any]] = []
             _collect_consumable_entries(data, entries)
             _merge_consumable_entries(int(entity_id), entries)
+            _record_active_sensors_from_consumables_snapshot(int(entity_id), data)
             if sensor_debug_enabled and sensor_debug_set and len(sensor_debug) < sensor_debug_limit:
                 tokens: set[str] = set()
                 _collect_text_tokens(data, tokens)

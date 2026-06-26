@@ -543,8 +543,6 @@ def _normalize_sensor_events(raw_events: Any) -> list[Dict[str, Any]]:
         if entity_id is None or entity_id < 0:
             continue
         radius = _safe_float(row.get("radius"), 0.0)
-        if radius <= 0.0:
-            continue
         start_time = _safe_float(row.get("start_time"), 0.0)
         duration_s = _safe_float(row.get("duration_s"), 0.0)
         end_time = _safe_float(row.get("end_time"), 0.0)
