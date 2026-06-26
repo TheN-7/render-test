@@ -7812,6 +7812,9 @@ def iter_animation_frames(canonical: Dict[str, Any], canvas_size: int = 600, spe
             stale = (not placeholder_only) and _friendly_stale_marker(side, spotted=actively_spotted, sunk=sunk, synthetic_start=synthetic_start)
             # Out-of-range allies we still know about should keep moving on the map.
             friendly_out_of_range = stale and (not sunk) and friendly_known
+            # Out-of-range allies keep their normal solid icon (no hollow/pixelated
+            # "stale" style) so the marker never changes when leaving spotting range.
+            draw_stale = stale and not friendly_out_of_range
             if (placeholder_only or stale) and not sunk and not friendly_out_of_range:
                 # Hide unspotted friendly ships only when we have no live tracking
                 # data for them (or they are a pre-spawn placeholder).
@@ -7945,7 +7948,7 @@ def iter_animation_frames(canonical: Dict[str, Any], canvas_size: int = 600, spe
                     _ship_name(track.get("ship_id")) or track.get("player_name"),
                     size=marker_size,
                     sunk=sunk,
-                    stale=stale,
+                    stale=draw_stale,
                     consumable_kind=(
                         (
                             _active_sensor_kind(
