@@ -57,6 +57,24 @@ applied to X, so vision tracks got truncated by the out-of-bounds sanitizer.
   resolved heading tracks travel direction within avg ~14 deg (was 110-167 deg /
   reversed); icon nose points forward along the trail.
 
+## Data audit (2026-06-26, tierra_del_fuego replay, client 15.5.0)
+Audited canonical data vs renderer usage. Findings:
+- HIGH: radar/hydro sensor rings absent. In v15.5 the consumable-used payload is an
+  opaque pickled blob (unpickle fails) and `setConsumables` carries no readable name
+  tokens, so kind is recovered only by duration-matching reference data. heal/smoke/
+  engine/dcp/dfaa/reload_booster recover; radar/hydro activations are not observed in
+  the consumable stream at all (4+ radar ships present). Needs dedicated v15.5
+  consumable-packet reverse engineering. Applied a safe partial fix: radar token
+  matcher now also recognizes "rls"/"rlssearch" (WoWS internal name) — helps when
+  names are present but does NOT resolve the opaque-payload case in this replay.
+- LOW: artillery `shell_kind` is empty for all 1740 shots (diagnostics
+  shell_kinds_resolved=0), so HE/AP/CS tracer + kill-feed coloring falls back to
+  default white. `battery_kind` (main/secondary) does resolve.
+- LOW: ally Napoli has one ~12s minimap-vision gap (~t=491) where the icon holds its
+  last position before resuming; all other allies have <2.5s gaps.
+- INFO: events.spotting and events.sensors are empty; chat (6) and weatherParams are
+  parsed but intentionally not rendered; secondary artillery tracers (1111) are drawn.
+
 ## Next / Backlog
 - P2: Optionally add a "last seen Xs ago" hint near faded ally markers.
 - P2: Consider applying the same faded treatment in the final static summary PNG.

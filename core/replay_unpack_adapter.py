@@ -281,7 +281,7 @@ def _collect_text_tokens(value: Any, out: set[str]) -> None:
             _collect_text_tokens(v, out)
 
 def _infer_consumable_kind_from_tokens(tokens: set[str]) -> Optional[str]:
-    if any("radar" in t for t in tokens):
+    if any(token in t for t in tokens for token in ("radar", "rlssearch", "rls")):
         return "radar"
     if any(token in t for t in tokens for token in ("hydro", "hydroacoustic", "acoustic", "sonar")):
         return "hydro"
