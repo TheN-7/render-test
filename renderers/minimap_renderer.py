@@ -45,6 +45,10 @@ WOWS_WARNING = (255, 184, 96)
 COLOR_BG = WOWS_BG
 COLOR_UNSPOTTED = WOWS_NEUTRAL
 COLOR_SUNK = (90, 90, 90)
+# WoWS replay position units are ~5 metres each (verified via ship top speeds and
+# capture-zone radii). Used to convert real consumable ranges (metres) into the
+# renderer's world-unit space for radar/hydro detection rings.
+METERS_PER_WORLD_UNIT = 5.0
 WG_ICON_HEADING_OFFSET_DEG = -90.0
 RENDER_PRESTART_LEAD_S = 5.0
 _MOVEMENT_THRESHOLD = 5.0
@@ -6228,11 +6232,15 @@ def _extract_sensor_events(canonical: Dict[str, Any]) -> List[Dict[str, Any]]:
         end_time = _safe_float(row.get("end_time"), 0.0)
         if radius <= 0.0 or end_time <= start_time:
             continue
+        # Sensor radius is stored in metres; convert to the renderer's world units
+        # (same units as ship positions, ~5 m per unit) for the overlay.
+        radius_world = float(radius) / METERS_PER_WORLD_UNIT
         out.append(
             {
                 "entity_id": int(entity_id),
                 "kind": kind,
-                "radius": float(radius),
+                "radius": radius_world,
+                "range_m": float(radius),
                 "start_time": float(start_time),
                 "end_time": float(end_time),
             }

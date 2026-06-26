@@ -280,6 +280,23 @@ def _collect_text_tokens(value: Any, out: set[str]) -> None:
         for v in value:
             _collect_text_tokens(v, out)
 
+# Global WoWS consumable type ids (stable across versions). The
+# consumableUsageParams blob sent with Vehicle_onConsumableUsed encodes the type
+# id in its last byte; 12 = radar (RLSSearch), 10 = hydro (SonarSearch).
+_SENSOR_CONSUMABLE_TYPE_TO_KIND: Dict[int, str] = {10: "hydro", 12: "radar"}
+
+
+def _decode_consumable_type_id(blob: Any) -> Optional[int]:
+    """Return the global consumable type id encoded in a consumableUsageParams blob."""
+    if isinstance(blob, memoryview):
+        blob = blob.tobytes()
+    if isinstance(blob, bytearray):
+        blob = bytes(blob)
+    if isinstance(blob, bytes) and len(blob) >= 1:
+        return int(blob[-1])
+    return None
+
+
 def _infer_consumable_kind_from_tokens(tokens: set[str]) -> Optional[str]:
     if any(token in t for t in tokens for token in ("radar", "rlssearch", "rls")):
         return "radar"
@@ -2277,6 +2294,45 @@ def _extract_battle_overlay(
             kind = None
         radar_variant = _choose_consumable_variant("radar", ship_info) if ship_info else None
         sonar_variant = _choose_consumable_variant("hydro", ship_info) if ship_info else None
+        # Reliable sensor detection: the consumableUsageParams blob's last byte is
+        # the global consumable type id (12 = radar, 10 = hydro). When the type id
+        # identifies a sensor AND the ship actually mounts that consumable, emit the
+        # detection ring directly using the ship's reference range. This bypasses the
+        # opaque-payload / duration-matching heuristics that otherwise miss radar and
+        # hydro on current client versions.
+        sensor_type_id = _decode_consumable_type_id(usage_raw)
+        if sensor_type_id is None and "consumableUsageParams" in kwargs:
+            sensor_type_id = _decode_consumable_type_id(kwargs.get("consumableUsageParams"))
+        sensor_kind_by_type = _SENSOR_CONSUMABLE_TYPE_TO_KIND.get(sensor_type_id) if sensor_type_id is not None else None
+        sensor_type_variant = radar_variant if sensor_kind_by_type == "radar" else (sonar_variant if sensor_kind_by_type == "hydro" else None)
+        if sensor_kind_by_type and sensor_type_variant:
+            sensor_duration = 0.0
+            if len(args) > 1:
+                sensor_duration = _safe_float(args[1], 0.0)
+            elif "workTimeLeft" in kwargs:
+                sensor_duration = _safe_float(kwargs.get("workTimeLeft"), 0.0)
+            sensor_range_m = _safe_float(sensor_type_variant.get("range_m"), None)
+            if sensor_range_m is None:
+                params = _lookup_consumable_params(sensor_kind_by_type, int(entity_id))
+                sensor_range_m = _safe_float(params.get("range_m"), None)
+                if sensor_duration <= 0.0:
+                    sensor_duration = _safe_float(params.get("duration_s"), 0.0) or 0.0
+            if sensor_range_m and sensor_range_m > 0.0 and sensor_duration and sensor_duration > 0.0:
+                start_t = round(float(packet_time_ref[0]), 3)
+                sensor_events.append(
+                    {
+                        "entity_id": int(entity_id),
+                        "kind": sensor_kind_by_type,
+                        "radius": round(float(sensor_range_m), 3),
+                        "start_time": start_t,
+                        "duration_s": round(float(sensor_duration), 3),
+                        "end_time": round(float(start_t + sensor_duration), 3),
+                        "consumable_type": int(sensor_type_id),
+                        "confidence": "normal",
+                        "confidence_reason": "type_id",
+                    }
+                )
+                return
         chosen_variant = None
         sensor_fallback = False
         if kind is None:

@@ -1,0 +1,971 @@
+[
+  {
+    "event": "setConsumables",
+    "entity_id": 1051919,
+    "ship": "Petropavlovsk",
+    "data_repr": "{'specialConsumable': None, 'consumablesDict': [(8, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 4}, 'currentStateId': 0}, 'logicDump': ()}), (0, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': -1}, 'currentStateId': 0}, 'logicDump': ()}), (10, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 4}, 'currentStateId': 0}, 'logicDump': ()}), (12, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 4}, 'currentStateId': 0}, 'logicDump': ()})]}"
+  },
+  {
+    "event": "setConsumables",
+    "entity_id": 1051921,
+    "ship": "Småland",
+    "data_repr": "{'specialConsumable': None, 'consumablesDict': [(8, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 3}, 'currentStateId': 0}, 'logicDump': ()}), (0, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': -1}, 'currentStateId': 0}, 'logicDump': ()}), (3, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 4}, 'currentStateId': 0}, 'logicDump': ()}), (12, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 3}, 'currentStateId': 0}, 'logicDump': ()})]}"
+  },
+  {
+    "event": "setConsumables",
+    "entity_id": 1051929,
+    "ship": "Hawaii",
+    "data_repr": "{'specialConsumable': None, 'consumablesDict': [(8, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 3}, 'currentStateId': 0}, 'logicDump': ()}), (0, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': -1}, 'currentStateId': 0}, 'logicDump': ()}), (10, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 3}, 'currentStateId': 0}, 'logicDump': ()}), (12, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 3}, 'currentStateId': 0}, 'logicDump': ()})]}"
+  },
+  {
+    "event": "setConsumables",
+    "entity_id": 1051907,
+    "ship": "Hawaii",
+    "data_repr": "{'specialConsumable': None, 'consumablesDict': [(8, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 4}, 'currentStateId': 0}, 'logicDump': ()}), (0, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': -1}, 'currentStateId': 0}, 'logicDump': ()}), (10, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 4}, 'currentStateId': 0}, 'logicDump': ()}), (12, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 4}, 'currentStateId': 0}, 'logicDump': ()})]}"
+  },
+  {
+    "t": 116.27,
+    "entity_id": 1051903,
+    "ship": "Shimakaze",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x03'",
+      "workTimeLeft": "120.0"
+    },
+    "duration": 120.0
+  },
+  {
+    "t": 127.7,
+    "entity_id": 1051903,
+    "ship": "Shimakaze",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x06'",
+      "workTimeLeft": "22.0"
+    },
+    "duration": 22.0
+  },
+  {
+    "t": 207.45,
+    "entity_id": 1051921,
+    "ship": "Småland",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x0c'",
+      "workTimeLeft": "24.0"
+    },
+    "duration": 24.0
+  },
+  {
+    "t": 222.58,
+    "entity_id": 1051921,
+    "ship": "Småland",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x03'",
+      "workTimeLeft": "60.0"
+    },
+    "duration": 60.0
+  },
+  {
+    "t": 224.6,
+    "entity_id": 1051929,
+    "ship": "Hawaii",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\n'",
+      "workTimeLeft": "110.0"
+    },
+    "duration": 110.0
+  },
+  {
+    "t": 263.15,
+    "entity_id": 1051915,
+    "ship": "PTRPVLSK",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\n'",
+      "workTimeLeft": "82.5"
+    },
+    "duration": 82.5
+  },
+  {
+    "t": 266.43,
+    "entity_id": 1051917,
+    "ship": "Napoli",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x06'",
+      "workTimeLeft": "44.0"
+    },
+    "duration": 44.0
+  },
+  {
+    "t": 286.01,
+    "entity_id": 1051917,
+    "ship": "Napoli",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "28.0"
+    },
+    "duration": 28.0
+  },
+  {
+    "t": 325.0,
+    "entity_id": 1051909,
+    "ship": "Moskva",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x00'",
+      "workTimeLeft": "5.0"
+    },
+    "duration": 5.0
+  },
+  {
+    "t": 325.44,
+    "entity_id": 1051909,
+    "ship": "Moskva",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\n'",
+      "workTimeLeft": "110.0"
+    },
+    "duration": 110.0
+  },
+  {
+    "t": 331.58,
+    "entity_id": 1051929,
+    "ship": "Hawaii",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x00'",
+      "workTimeLeft": "5.0"
+    },
+    "duration": 5.0
+  },
+  {
+    "t": 331.58,
+    "entity_id": 1051907,
+    "ship": "Hawaii",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x00'",
+      "workTimeLeft": "5.0"
+    },
+    "duration": 5.0
+  },
+  {
+    "t": 334.13,
+    "entity_id": 1051929,
+    "ship": "Hawaii",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "28.0"
+    },
+    "duration": 28.0
+  },
+  {
+    "t": 350.57,
+    "entity_id": 1051909,
+    "ship": "Moskva",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "28.0"
+    },
+    "duration": 28.0
+  },
+  {
+    "t": 359.29,
+    "entity_id": 1051903,
+    "ship": "Shimakaze",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x03'",
+      "workTimeLeft": "120.0"
+    },
+    "duration": 120.0
+  },
+  {
+    "t": 366.89,
+    "entity_id": 1051907,
+    "ship": "Hawaii",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "28.0"
+    },
+    "duration": 28.0
+  },
+  {
+    "t": 369.43,
+    "entity_id": 1051919,
+    "ship": "Petropavlovsk",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x0c'",
+      "workTimeLeft": "16.5"
+    },
+    "duration": 16.5
+  },
+  {
+    "t": 379.46,
+    "entity_id": 1051915,
+    "ship": "PTRPVLSK",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x0c'",
+      "workTimeLeft": "14.850000381469727"
+    },
+    "duration": 14.85
+  },
+  {
+    "event": "setConsumables",
+    "entity_id": 1051923,
+    "ship": "Småland",
+    "data_repr": "{'specialConsumable': None, 'consumablesDict': [(8, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 3}, 'currentStateId': 0}, 'logicDump': ()}), (0, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': -1}, 'currentStateId': 0}, 'logicDump': ()}), (3, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 3}, 'currentStateId': 0}, 'logicDump': ()}), (12, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 3}, 'currentStateId': 0}, 'logicDump': ()})]}"
+  },
+  {
+    "t": 394.16,
+    "entity_id": 1051923,
+    "ship": "Småland",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x03'",
+      "workTimeLeft": "60.0"
+    },
+    "duration": 60.0
+  },
+  {
+    "t": 396.74,
+    "entity_id": 1051903,
+    "ship": "Shimakaze",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x00'",
+      "workTimeLeft": "5.0"
+    },
+    "duration": 5.0
+  },
+  {
+    "event": "setConsumables",
+    "entity_id": 1051921,
+    "ship": "Småland",
+    "data_repr": "{'specialConsumable': None, 'consumablesDict': [(8, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 3}, 'currentStateId': 0}, 'logicDump': ()}), (0, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': -1}, 'currentStateId': 0}, 'logicDump': ()}), (3, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 52.85715285711922, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 2}, 'currentStateId': 3}, 'logicDump': ()}), (12, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 2}, 'currentStateId': 0}, 'logicDump': ()})]}"
+  },
+  {
+    "t": 413.16,
+    "entity_id": 1051919,
+    "ship": "Petropavlovsk",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\n'",
+      "workTimeLeft": "110.0"
+    },
+    "duration": 110.0
+  },
+  {
+    "t": 419.87,
+    "entity_id": 1051905,
+    "ship": "Kléber",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x04'",
+      "workTimeLeft": "15.0"
+    },
+    "duration": 15.0
+  },
+  {
+    "t": 431.86,
+    "entity_id": 1051919,
+    "ship": "Petropavlovsk",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "28.0"
+    },
+    "duration": 28.0
+  },
+  {
+    "t": 432.04,
+    "entity_id": 1051921,
+    "ship": "Småland",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x00'",
+      "workTimeLeft": "5.0"
+    },
+    "duration": 5.0
+  },
+  {
+    "t": 433.77,
+    "entity_id": 1051919,
+    "ship": "Petropavlovsk",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x00'",
+      "workTimeLeft": "5.0"
+    },
+    "duration": 5.0
+  },
+  {
+    "t": 434.62,
+    "entity_id": 1051915,
+    "ship": "PTRPVLSK",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x00'",
+      "workTimeLeft": "3.75"
+    },
+    "duration": 3.75
+  },
+  {
+    "t": 435.61,
+    "entity_id": 1051915,
+    "ship": "PTRPVLSK",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "21.0"
+    },
+    "duration": 21.0
+  },
+  {
+    "t": 449.0,
+    "entity_id": 1051905,
+    "ship": "Kléber",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x00'",
+      "workTimeLeft": "5.0"
+    },
+    "duration": 5.0
+  },
+  {
+    "t": 456.43,
+    "entity_id": 1051909,
+    "ship": "Moskva",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "28.0"
+    },
+    "duration": 28.0
+  },
+  {
+    "t": 459.3,
+    "entity_id": 1051921,
+    "ship": "Småland",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "14.0"
+    },
+    "duration": 14.0
+  },
+  {
+    "t": 464.05,
+    "entity_id": 1051907,
+    "ship": "Hawaii",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x0c'",
+      "workTimeLeft": "40.0"
+    },
+    "duration": 40.0
+  },
+  {
+    "event": "setConsumables",
+    "entity_id": 1051923,
+    "ship": "Småland",
+    "data_repr": "{'specialConsumable': None, 'consumablesDict': [(8, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 3}, 'currentStateId': 0}, 'logicDump': ()}), (0, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': -1}, 'currentStateId': 0}, 'logicDump': ()}), (3, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 85.85715285711922, 'selected': False, 'enabled': True, 'numConsumables': 2}, 'currentStateId': 4}, 'logicDump': ()}), (12, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 3}, 'currentStateId': 0}, 'logicDump': ()})]}"
+  },
+  {
+    "t": 465.18,
+    "entity_id": 1051923,
+    "ship": "Småland",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x0c'",
+      "workTimeLeft": "24.0"
+    },
+    "duration": 24.0
+  },
+  {
+    "t": 468.61,
+    "entity_id": 1051929,
+    "ship": "Hawaii",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x00'",
+      "workTimeLeft": "5.0"
+    },
+    "duration": 5.0
+  },
+  {
+    "t": 480.72,
+    "entity_id": 1051903,
+    "ship": "Shimakaze",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x00'",
+      "workTimeLeft": "5.0"
+    },
+    "duration": 5.0
+  },
+  {
+    "t": 499.45,
+    "entity_id": 1051919,
+    "ship": "Petropavlovsk",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x00'",
+      "workTimeLeft": "5.0"
+    },
+    "duration": 5.0
+  },
+  {
+    "t": 520.62,
+    "entity_id": 1051907,
+    "ship": "Hawaii",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "28.0"
+    },
+    "duration": 28.0
+  },
+  {
+    "t": 525.74,
+    "entity_id": 1051907,
+    "ship": "Hawaii",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x00'",
+      "workTimeLeft": "5.0"
+    },
+    "duration": 5.0
+  },
+  {
+    "t": 534.14,
+    "entity_id": 1051915,
+    "ship": "PTRPVLSK",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "21.0"
+    },
+    "duration": 21.0
+  },
+  {
+    "t": 537.18,
+    "entity_id": 1051925,
+    "ship": "Napoli B",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x06'",
+      "workTimeLeft": "44.0"
+    },
+    "duration": 44.0
+  },
+  {
+    "t": 539.29,
+    "entity_id": 1051925,
+    "ship": "Napoli B",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "28.0"
+    },
+    "duration": 28.0
+  },
+  {
+    "t": 553.0,
+    "entity_id": 1051929,
+    "ship": "Hawaii",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "28.0"
+    },
+    "duration": 28.0
+  },
+  {
+    "t": 561.74,
+    "entity_id": 1051909,
+    "ship": "Moskva",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "28.0"
+    },
+    "duration": 28.0
+  },
+  {
+    "t": 561.74,
+    "entity_id": 1051909,
+    "ship": "Moskva",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x0c'",
+      "workTimeLeft": "36.0"
+    },
+    "duration": 36.0
+  },
+  {
+    "t": 569.44,
+    "entity_id": 1051919,
+    "ship": "Petropavlovsk",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x0c'",
+      "workTimeLeft": "16.5"
+    },
+    "duration": 16.5
+  },
+  {
+    "t": 579.29,
+    "entity_id": 1051913,
+    "ship": "Ohio",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x00'",
+      "workTimeLeft": "22.0"
+    },
+    "duration": 22.0
+  },
+  {
+    "t": 580.02,
+    "entity_id": 1051913,
+    "ship": "Ohio",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "30.799999237060547"
+    },
+    "duration": 30.8
+  },
+  {
+    "t": 581.58,
+    "entity_id": 1051907,
+    "ship": "Hawaii",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\n'",
+      "workTimeLeft": "132.0"
+    },
+    "duration": 132.0
+  },
+  {
+    "t": 585.16,
+    "entity_id": 1051921,
+    "ship": "Småland",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x03'",
+      "workTimeLeft": "60.0"
+    },
+    "duration": 60.0
+  },
+  {
+    "t": 599.72,
+    "entity_id": 1051911,
+    "ship": "Vermont",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x00'",
+      "workTimeLeft": "22.0"
+    },
+    "duration": 22.0
+  },
+  {
+    "t": 608.15,
+    "entity_id": 1051921,
+    "ship": "Småland",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "14.0"
+    },
+    "duration": 14.0
+  },
+  {
+    "event": "setConsumables",
+    "entity_id": 1051923,
+    "ship": "Småland",
+    "data_repr": "{'specialConsumable': None, 'consumablesDict': [(8, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 55.85715285711922, 'selected': False, 'enabled': True, 'numConsumables': 2}, 'currentStateId': 4}, 'logicDump': ()}), (0, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': -1}, 'currentStateId': 0}, 'logicDump': ()}), (3, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 56.85715285711922, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 1}, 'currentStateId': 3}, 'logicDump': ()}), (12, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 2}, 'currentStateId': 0}, 'logicDump': ()})]}"
+  },
+  {
+    "t": 613.89,
+    "entity_id": 1051907,
+    "ship": "Hawaii",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x00'",
+      "workTimeLeft": "5.0"
+    },
+    "duration": 5.0
+  },
+  {
+    "t": 618.88,
+    "entity_id": 1051929,
+    "ship": "Hawaii",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x00'",
+      "workTimeLeft": "5.0"
+    },
+    "duration": 5.0
+  },
+  {
+    "t": 626.31,
+    "entity_id": 1051907,
+    "ship": "Hawaii",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x0c'",
+      "workTimeLeft": "40.0"
+    },
+    "duration": 40.0
+  },
+  {
+    "event": "setConsumables",
+    "entity_id": 1051923,
+    "ship": "Småland",
+    "data_repr": "{'specialConsumable': None, 'consumablesDict': [(8, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 41.85715285711922, 'selected': False, 'enabled': True, 'numConsumables': 2}, 'currentStateId': 4}, 'logicDump': ()}), (0, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': -1}, 'currentStateId': 0}, 'logicDump': ()}), (3, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 42.85715285711922, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 1}, 'currentStateId': 3}, 'logicDump': ()}), (12, {'lifecycleDump': {'contextDump': {'preparationTimeLeft': 0.0, 'workTimeLeft': 0.0, 'workPreparationTimeLeft': 0.0, 'reloadTimeLeft': 0.0, 'selected': False, 'enabled': True, 'numConsumables': 2}, 'currentStateId': 0}, 'logicDump': ()})]}"
+  },
+  {
+    "t": 630.9,
+    "entity_id": 1051907,
+    "ship": "Hawaii",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "28.0"
+    },
+    "duration": 28.0
+  },
+  {
+    "t": 632.62,
+    "entity_id": 1051915,
+    "ship": "PTRPVLSK",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "21.0"
+    },
+    "duration": 21.0
+  },
+  {
+    "t": 639.73,
+    "entity_id": 1051923,
+    "ship": "Småland",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x00'",
+      "workTimeLeft": "5.0"
+    },
+    "duration": 5.0
+  },
+  {
+    "t": 642.9,
+    "entity_id": 1051919,
+    "ship": "Petropavlovsk",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "28.0"
+    },
+    "duration": 28.0
+  },
+  {
+    "t": 647.6,
+    "entity_id": 1051919,
+    "ship": "Petropavlovsk",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\n'",
+      "workTimeLeft": "110.0"
+    },
+    "duration": 110.0
+  },
+  {
+    "t": 656.87,
+    "entity_id": 1051913,
+    "ship": "Ohio",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "30.799999237060547"
+    },
+    "duration": 30.8
+  },
+  {
+    "t": 658.31,
+    "entity_id": 1051929,
+    "ship": "Hawaii",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "28.0"
+    },
+    "duration": 28.0
+  },
+  {
+    "t": 660.62,
+    "entity_id": 1051925,
+    "ship": "Napoli B",
+    "nargs": 0,
+    "kwarg_keys": [
+      "consumableUsageParams",
+      "workTimeLeft"
+    ],
+    "kwargs": {
+      "consumableUsageParams": "b'\\x01\\x08'",
+      "workTimeLeft": "28.0"
+    },
+    "duration": 28.0
+  }
+]
