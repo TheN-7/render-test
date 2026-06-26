@@ -4410,10 +4410,47 @@ def _minimap_vision_tracks(canonical: Dict[str, Any], normalized: Dict[str, Dict
                 }
             )
 
+    fit_x, fit_z, _x_threshold = decode_model
+    wrap_x = abs(float(fit_x[0])) * 1024.0
+    wrap_z = abs(float(fit_z[0])) * 1024.0
     for entity_key, points in per_entity.items():
         points.sort(key=lambda item: float(item.get("t", 0.0)))
+        _unwrap_vision_points_continuity(points, wrap_x, wrap_z)
         per_entity[entity_key] = _sanitize_minimap_vision_points(points, world_bounds=world_bounds)
     return per_entity
+
+
+def _unwrap_vision_points_continuity(
+    points: List[Dict[str, float]],
+    wrap_x: float,
+    wrap_z: float,
+) -> List[Dict[str, float]]:
+    # The 10-bit packed minimap axes wrap at 1024 levels. When a ship crosses a
+    # packing boundary the decoded coordinate jumps by ~one full map span, which
+    # would otherwise be discarded as out-of-bounds and truncate the track. Undo
+    # those wraps by keeping each point continuous with the previous one.
+    if len(points) < 2:
+        return points
+    prev_x = float(points[0].get("x", 0.0) or 0.0)
+    prev_z = float(points[0].get("z", 0.0) or 0.0)
+    for p in points[1:]:
+        x = float(p.get("x", 0.0) or 0.0)
+        z = float(p.get("z", 0.0) or 0.0)
+        if wrap_x > 1.0:
+            while x - prev_x > wrap_x / 2.0:
+                x -= wrap_x
+            while x - prev_x < -wrap_x / 2.0:
+                x += wrap_x
+        if wrap_z > 1.0:
+            while z - prev_z > wrap_z / 2.0:
+                z -= wrap_z
+            while z - prev_z < -wrap_z / 2.0:
+                z += wrap_z
+        p["x"] = round(x, 3)
+        p["z"] = round(z, 3)
+        prev_x = x
+        prev_z = z
+    return points
 
 
 def _sanitize_minimap_vision_points(
@@ -4490,6 +4527,7 @@ def _merge_friendly_track_with_vision(
             "yaw": float(source_yaw),
             "pitch": 0.0,
             "roll": 0.0,
+            "vision": True,
         }
         merged.insert(insert_at, new_point)
         merged_times.insert(insert_at, float(new_point["t"]))
@@ -4840,9 +4878,28 @@ def _normalize_render_tracks(canonical: Dict[str, Any]) -> Dict[str, Dict[str, A
             "yaw": float(yaw),
         }
 
-    # Keep real ship tracks packet-accurate. Decoded minimap-vision points are
-    # only used for ships that otherwise have no normal replay track, not to
-    # alter an existing real track.
+    # Keep real ship tracks packet-accurate during spotting. For allies, fill the
+    # gaps after a ship leaves spotting range with decoded minimap-vision points
+    # so friendly ships keep moving on the render exactly like the in-game minimap
+    # (they stay visible instead of vanishing). Vision-filled points are tagged so
+    # the renderer can show them as a faded "last-known" marker rather than a solid
+    # actively-spotted icon. Real spotted segments are left untouched.
+    for entity_key, item in normalized.items():
+        if str(item.get("team_side") or "") != "friendly":
+            continue
+        if bool(item.get("always_unspotted", False)):
+            continue
+        real_points = list(item.get("points", []) or [])
+        if not real_points:
+            continue
+        vpoints = list(vision_tracks.get(str(entity_key), []) or [])
+        if not vpoints:
+            continue
+        fallback_yaw = float(real_points[0].get("yaw", friendly_spawn_yaw) or friendly_spawn_yaw)
+        merged_points = _merge_friendly_track_with_vision(real_points, vpoints, fallback_yaw)
+        if len(merged_points) > len(real_points):
+            item["points"] = merged_points
+            item["has_minimap_vision"] = True
 
     def _find_lineup_slot_for_entity(entity_row: Dict[str, Any]) -> Dict[str, Any] | None:
         account_id = str(entity_row.get("account_entity_id") or "").strip()
@@ -4901,7 +4958,9 @@ def _normalize_render_tracks(canonical: Dict[str, Any]) -> Dict[str, Dict[str, A
         if vision_points:
             for point in vision_points:
                 point["yaw"] = float(friendly_spawn_yaw)
+                point["vision"] = True
             normalized[key]["points"] = vision_points
+            normalized[key]["has_minimap_vision"] = True
         else:
             normalized[key]["points"] = [
                 {
@@ -6033,6 +6092,7 @@ def _prepare_track_render_data(
         if not points:
             continue
         times = [float(p.get("t", 0.0)) for p in points]
+        real_times = [float(p.get("t", 0.0)) for p in points if not bool(p.get("vision"))]
         pixels = [
             _to_px(
                 float(p.get("x", 0.0)),
@@ -6049,6 +6109,7 @@ def _prepare_track_render_data(
             "track": track,
             "points": points,
             "times": times,
+            "real_times": real_times,
             "pixels": pixels,
             "ship_type": _ship_type(track.get("ship_id")),
             "ship_class": _ship_class_code(track.get("ship_id")),
@@ -7712,6 +7773,16 @@ def iter_animation_frames(canonical: Dict[str, Any], canvas_size: int = 600, spe
             points = all_points[max(0, idx - 9) : idx + 1]
             last_t = times[idx]
             spotted = (t_replay - last_t) <= spot_timeout and not synthetic_start and not bool(track.get("always_unspotted", False))
+            # "Actively spotted" is decided only by real position packets (not by
+            # minimap-vision fill points), so an ally that left spotting range is
+            # rendered as a faded last-known marker rather than a solid icon.
+            real_times = prepared.get("real_times") or []
+            last_real_t = None
+            if real_times and not synthetic_start and not bool(track.get("always_unspotted", False)):
+                ridx = bisect_right(real_times, t_replay) - 1
+                if ridx >= 0:
+                    last_real_t = real_times[ridx]
+            actively_spotted = last_real_t is not None and (t_replay - last_real_t) <= spot_timeout
             prev_heading = heading_memory.get(str(entity_key))
             if spotted:
                 ever_spotted_memory[ekey] = True
@@ -7728,10 +7799,22 @@ def iter_animation_frames(canonical: Dict[str, Any], canvas_size: int = 600, spe
                 and synthetic_start
                 and (not sunk)
             )
-            stale = (not placeholder_only) and _friendly_stale_marker(side, spotted=spotted, sunk=sunk, synthetic_start=synthetic_start)
-            if (placeholder_only or stale) and not sunk:
-                # Hide unspotted friendly ships until they have active
-                # tracking data instead of showing static icons.
+            # An ally is "known" on the team minimap when we have a recent real
+            # packet OR recent decoded minimap-vision position. We keep showing
+            # such allies (faded) instead of letting them vanish from the render.
+            vision_hold_s = max(spot_timeout, 20.0)
+            friendly_known = (
+                side == "friendly"
+                and (not synthetic_start)
+                and (bool(track.get("has_minimap_vision", False)) or last_real_t is not None)
+                and (t_replay - last_t) <= vision_hold_s
+            )
+            stale = (not placeholder_only) and _friendly_stale_marker(side, spotted=actively_spotted, sunk=sunk, synthetic_start=synthetic_start)
+            # Out-of-range allies we still know about should keep moving on the map.
+            friendly_out_of_range = stale and (not sunk) and friendly_known
+            if (placeholder_only or stale) and not sunk and not friendly_out_of_range:
+                # Hide unspotted friendly ships only when we have no live tracking
+                # data for them (or they are a pre-spawn placeholder).
                 continue
             if sunk and death_t is not None:
                 exact_point = all_points[idx] if 0 <= idx < len(all_points) else points[-1]
