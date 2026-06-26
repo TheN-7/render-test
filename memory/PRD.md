@@ -45,6 +45,18 @@ applied to X, so vision tracks got truncated by the out-of-bounds sanitizer.
 - Full MP4 pipeline + render_static run clean. Test suite: the 7 failing tests fail
   identically WITHOUT these changes (pre-existing, missing map/icon assets in this env).
 
+## Follow-up tweaks (2026-06-26)
+- Out-of-range allies keep their NORMAL solid icon (no hollow/pixelated "stale"
+  style). In `iter_animation_frames`, out-of-range allies are drawn with
+  `draw_stale=False` so the icon never changes when leaving spotting range.
+- Heading fix: minimap-vision points have no yaw, so merged points inherited the
+  last spotted yaw. When an ally maneuvered out of range it faced backwards and
+  snapped 180 deg on re-spot (observed on Småland t~379-446s, all vision points).
+  Now out-of-range allies (`friendly_out_of_range`) are oriented by their actual
+  direction of travel (`_movement_heading_metrics`, window=5, lerp 0.6). Verified:
+  resolved heading tracks travel direction within avg ~14 deg (was 110-167 deg /
+  reversed); icon nose points forward along the trail.
+
 ## Next / Backlog
 - P2: Optionally add a "last seen Xs ago" hint near faded ally markers.
 - P2: Consider applying the same faded treatment in the final static summary PNG.

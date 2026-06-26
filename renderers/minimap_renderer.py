@@ -7870,6 +7870,17 @@ def iter_animation_frames(canonical: Dict[str, Any], canvas_size: int = 600, spe
                 heading_deg = _yaw_to_heading_deg(float(placeholder_state.get("yaw", 0.0) or 0.0))
             elif sunk and prev_heading is not None:
                 heading_deg = prev_heading
+            elif friendly_out_of_range and state is not None:
+                # Minimap-vision positions carry no heading, so the merged points
+                # inherit a stale yaw from the last spotted moment. Face the icon
+                # along its actual direction of travel instead, so an ally that
+                # maneuvers while out of spotting range never appears to sail
+                # backwards (and never snaps 180 degrees when re-spotted).
+                _mv_heading, _mv_dist = _movement_heading_metrics(points, window=min(5, len(points)), min_segment=0.6)
+                if _mv_heading is not None and _mv_dist >= 1.5:
+                    heading_deg = _mv_heading if prev_heading is None else _lerp_angle_deg(prev_heading, _mv_heading, 0.6)
+                else:
+                    heading_deg = prev_heading if prev_heading is not None else _yaw_to_heading_deg(float(state.get("yaw", 0.0) or 0.0))
             elif state is not None:
                 observed_heading_deg = _yaw_to_heading_deg(float(state.get("yaw", points[-1].get("yaw", 0.0)) or 0.0))
                 movement_heading_deg, movement_dist = _movement_heading_metrics(points, window=min(6, len(points)), min_segment=0.45)
