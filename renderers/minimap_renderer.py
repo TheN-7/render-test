@@ -265,21 +265,27 @@ def _text_sprite(
 ) -> Image.Image | None:
     if not text:
         return None
-    font = _load_font(size, bold=bold, face=face)
+    scale = 2
+    font = _load_font(size * scale, bold=bold, face=face)
+    stroke_hi = max(0, int(stroke_width) * scale)
     probe = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
     probe_draw = ImageDraw.Draw(probe)
-    bbox = probe_draw.textbbox((0, 0), text, font=font, stroke_width=stroke_width)
-    shadow_pad = 1 if shadow is not None else 0
-    width = max(1, (bbox[2] - bbox[0]) + shadow_pad + stroke_width + 1)
-    height = max(1, (bbox[3] - bbox[1]) + shadow_pad + stroke_width + 1)
-    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    bbox = probe_draw.textbbox((0, 0), text, font=font, stroke_width=stroke_hi)
+    shadow_pad = scale if shadow is not None else 0
+    width_hi = max(1, (bbox[2] - bbox[0]) + shadow_pad + stroke_hi + scale)
+    height_hi = max(1, (bbox[3] - bbox[1]) + shadow_pad + stroke_hi + scale)
+    img = Image.new("RGBA", (width_hi, height_hi), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
     ox = -bbox[0]
     oy = -bbox[1]
     if shadow is not None:
-        draw.text((ox + 1, oy + 1), text, fill=shadow, font=font, stroke_width=stroke_width, stroke_fill=stroke_fill)
-    draw.text((ox, oy), text, fill=fill, font=font, stroke_width=stroke_width, stroke_fill=stroke_fill)
-    return img
+        draw.text((ox + scale, oy + scale), text, fill=shadow, font=font, stroke_width=stroke_hi, stroke_fill=stroke_fill)
+    draw.text((ox, oy), text, fill=fill, font=font, stroke_width=stroke_hi, stroke_fill=stroke_fill)
+    target_size = (
+        max(1, int(math.ceil(width_hi / float(scale)))),
+        max(1, int(math.ceil(height_hi / float(scale)))),
+    )
+    return img.resize(target_size, Image.Resampling.LANCZOS)
 
 
 @lru_cache(maxsize=4096)
@@ -654,7 +660,10 @@ def _load_status_icon(kind: str, size: int) -> Image.Image | None:
 def _load_consumable_icon(kind: str, size: int) -> Image.Image | None:
     if size <= 0:
         return None
-    key = (kind, int(size))
+    normalized_kind = str(kind or "").strip().lower()
+    if normalized_kind in {"defaa", "def_aa", "defensive_aa", "air_defense", "airdefense"}:
+        normalized_kind = "dfaa"
+    key = (normalized_kind, int(size))
     cached = _CONSUMABLE_ICON_CACHE.get(key)
     if cached is not None:
         return cached
@@ -664,8 +673,9 @@ def _load_consumable_icon(kind: str, size: int) -> Image.Image | None:
         "smoke": "consumable_PCY006_SmokeGenerator.png",
         "heal": "consumable_PCY002_RegenCrew.png",
         "engine": "consumable_PXY027_SpeedBooster.png",
+        "dfaa": "consumable_PCY011_AirDefenseDispPremium.png",
     }
-    filename = mapping.get(kind)
+    filename = mapping.get(normalized_kind)
     if not filename:
         return None
     path = _consumables_dir() / filename
@@ -1010,9 +1020,7 @@ def _fit_icon_to_square(icon: Image.Image, map_size: int) -> Image.Image:
         return rgba
     if rgba.width == rgba.height:
         fitted = rgba.resize((map_size, map_size), Image.Resampling.LANCZOS)
-        if map_size > max(rgba.width, rgba.height):
-            fitted = fitted.filter(ImageFilter.UnsharpMask(radius=1.2, percent=110, threshold=2))
-        return fitted
+        return _crisp_map_layer(fitted, upscaled=map_size > max(rgba.width, rgba.height))
 
     scale = min(map_size / max(1, rgba.width), map_size / max(1, rgba.height))
     target = (
@@ -1020,13 +1028,26 @@ def _fit_icon_to_square(icon: Image.Image, map_size: int) -> Image.Image:
         max(1, int(round(rgba.height * scale))),
     )
     fitted = rgba.resize(target, Image.Resampling.LANCZOS)
-    if target[0] > rgba.width or target[1] > rgba.height:
-        fitted = fitted.filter(ImageFilter.UnsharpMask(radius=1.2, percent=110, threshold=2))
+    fitted = _crisp_map_layer(fitted, upscaled=target[0] > rgba.width or target[1] > rgba.height)
     square = Image.new("RGBA", (map_size, map_size), (0, 0, 0, 0))
     ox = (map_size - fitted.width) // 2
     oy = (map_size - fitted.height) // 2
     square.paste(fitted, (ox, oy), fitted)
     return square
+
+
+def _crisp_map_layer(layer: Image.Image, *, upscaled: bool = False) -> Image.Image:
+    rgba = layer.convert("RGBA")
+    alpha = rgba.getchannel("A")
+    sharpened = rgba.filter(
+        ImageFilter.UnsharpMask(
+            radius=0.85 if upscaled else 0.65,
+            percent=165 if upscaled else 120,
+            threshold=2,
+        )
+    )
+    sharpened.putalpha(alpha)
+    return sharpened
 
 
 @lru_cache(maxsize=64)
@@ -1151,6 +1172,7 @@ def _map_background_layer(url: str, map_size: int, margin: int) -> Image.Image |
     # slightly oversized relative to the replay coordinate plane.
     scaled_usable = max(1, int(round(usable * 0.97)))
     bg = square.resize((scaled_usable, scaled_usable), Image.Resampling.LANCZOS)
+    bg = _crisp_map_layer(bg, upscaled=scaled_usable > max(square.width, square.height))
     # Keep map readable but subtle so tracks/icons stay visible.
     bg = ImageEnhance.Brightness(bg).enhance(0.75)
     bg_alpha = bg.getchannel("A").point(lambda a: min(185, a))
@@ -5520,14 +5542,6 @@ def _draw_ship_marker(
             ty = cy - size - label.height - 4
             img.paste(label, (tx, ty), label)
 
-    if consumable_kind:
-        icon_size = max(10, int(size * 2))
-        cicon = _load_consumable_icon(consumable_kind, icon_size)
-        if cicon is not None:
-            ix = cx - cicon.width // 2
-            iy = cy + size + 2
-            img.paste(cicon, (ix, iy), cicon)
-
 
 @lru_cache(maxsize=64)
 def _ship_class_placeholder_icon(code: str, team_side: str, size: int) -> Image.Image:
@@ -5613,6 +5627,18 @@ def _draw_hp_bar(
     draw.rectangle([inner_left, inner_top, inner_right, inner_bottom], fill=fill_color)
 
 
+def _draw_active_consumable_icon(img: Image.Image, cx: int, top: int, kind: Optional[str], marker_size: int) -> None:
+    if not kind:
+        return
+    icon_size = max(12, int(round(float(marker_size) * 2.0 * 1.15)))
+    cicon = _load_consumable_icon(str(kind), icon_size)
+    if cicon is None:
+        return
+    ix = int(cx - cicon.width // 2)
+    iy = int(top)
+    img.paste(cicon, (ix, iy), cicon)
+
+
 def _active_sensor_kind(sensor_by_entity: Dict[int, List[Dict[str, Any]]], entity_id: int, t: float) -> Optional[str]:
     events = sensor_by_entity.get(int(entity_id), [])
     active_kind = None
@@ -5655,6 +5681,7 @@ def _active_consumable_kind(consumable_by_entity: Dict[int, List[Dict[str, Any]]
     active_heal = False
     active_engine = False
     active_smoke = False
+    active_dfaa = False
     for event in events:
         start_time = float(event.get("start_time", 0.0))
         end_time = float(event.get("end_time", 0.0))
@@ -5667,10 +5694,14 @@ def _active_consumable_kind(consumable_by_entity: Dict[int, List[Dict[str, Any]]
             active_engine = True
         elif kind == "smoke":
             active_smoke = True
+        elif kind in {"dfaa", "defaa", "def_aa", "defensive_aa", "air_defense", "airdefense"}:
+            active_dfaa = True
     if active_heal:
         return "heal"
     if active_smoke:
         return "smoke"
+    if active_dfaa:
+        return "dfaa"
     if active_engine:
         return "engine"
     return None
@@ -6292,23 +6323,26 @@ def _extract_sensor_events(canonical: Dict[str, Any]) -> List[Dict[str, Any]]:
         if entity_id is None:
             continue
         radius = _safe_float(row.get("radius"), 0.0)
+        metadata_range_m = _ship_consumable_range_m(_ship_id_for_entity(int(entity_id)), kind)
+        if metadata_range_m is not None:
+            range_m = float(metadata_range_m)
+        elif radius > 1000.0:
+            range_m = float(radius)
+        elif radius > 0.0:
+            range_m = float(radius) * METERS_PER_WORLD_UNIT
+        else:
+            range_m = 0.0
         start_time = _safe_float(row.get("start_time"), 0.0)
         end_time = _safe_float(row.get("end_time"), 0.0)
-        if radius <= 0.0:
-            fallback_range_m = _ship_consumable_range_m(_ship_id_for_entity(int(entity_id)), kind)
-            if fallback_range_m is not None:
-                radius = float(fallback_range_m)
-        if radius <= 0.0 or end_time <= start_time:
+        if range_m <= 0.0 or end_time <= start_time:
             continue
-        # Sensor radius is stored in metres; convert to the renderer's world units
-        # (same units as ship positions, ~5 m per unit) for the overlay.
-        radius_world = float(radius) / METERS_PER_WORLD_UNIT
+        radius_world = float(range_m) / METERS_PER_WORLD_UNIT
         out.append(
             {
                 "entity_id": int(entity_id),
                 "kind": kind,
                 "radius": radius_world,
-                "range_m": float(radius),
+                "range_m": float(range_m),
                 "start_time": float(start_time),
                 "end_time": float(end_time),
             }
@@ -6327,7 +6361,9 @@ def _extract_consumable_events(canonical: Dict[str, Any]) -> List[Dict[str, Any]
         if not isinstance(row, dict):
             continue
         kind = str(row.get("kind") or "").strip().lower()
-        if kind not in ("heal", "engine", "smoke"):
+        if kind in {"defaa", "def_aa", "defensive_aa", "air_defense", "airdefense"}:
+            kind = "dfaa"
+        if kind not in ("heal", "engine", "smoke", "dfaa"):
             continue
         entity_id = _safe_int(row.get("entity_id"))
         if entity_id is None:
@@ -7026,7 +7062,8 @@ def _draw_capture_overlay(
     if enemy_team_id is None:
         enemy_team_id = _safe_int(meta.get("enemy_team_id"))
 
-    font = _load_font(max(10, canvas_size // 70), bold=True, face=INGAME_FONT_FACE)
+    label_font_size = max(10, canvas_size // 70)
+    font = _load_font(label_font_size, bold=True, face=INGAME_FONT_FACE)
 
     def _as_float(v: Any, default: float = 0.0) -> float:
         try:
@@ -7152,13 +7189,11 @@ def _draw_capture_overlay(
             status = "contested"
 
         text = f"{label} {status}".strip()
-        bbox = draw.textbbox((0, 0), text, font=font)
-        tw = bbox[2] - bbox[0]
-        th = bbox[3] - bbox[1]
-        tx = px - tw // 2
-        ty = py - radius_px - th - 2
-        draw.text((tx + 1, ty + 1), text, fill=(0, 0, 0), font=font)
-        draw.text((tx, ty), text, fill=ring_color, font=font)
+        label_sprite = _text_sprite(text, label_font_size, ring_color, shadow=(0, 0, 0), bold=True, face=INGAME_FONT_FACE)
+        if label_sprite is not None:
+            tx = px - label_sprite.width // 2
+            ty = py - radius_px - label_sprite.height - 2
+            img.paste(label_sprite, (tx, ty), label_sprite)
         draw.ellipse([px - 2, py - 2, px + 2, py + 2], fill=ring_color, outline=ring_color)
 
 
@@ -7402,6 +7437,7 @@ def render_static(canonical: Dict[str, Any], canvas_size: int = 1024, show_label
         )
         stale = (not placeholder_only) and _friendly_stale_marker(_color_side(track), spotted=spotted, sunk=sunk)
         marker_color = (245, 245, 245) if is_local_player and not sunk else color
+        active_kind: Optional[str] = None
         if placeholder_only:
             ex, ey = _to_px(
                 float(placeholder.get("x", 0.0) or 0.0),
@@ -7438,6 +7474,22 @@ def render_static(canonical: Dict[str, Any], canvas_size: int = 1024, show_label
             )
             poly = [_to_px(float(p.get("x", 0.0)), float(p.get("z", 0.0)), half, canvas_size, margin, world_bounds=world_bounds, map_rect=map_rect) for p in render_pts]
             ex, ey = poly[-1]
+            active_kind = (
+                (
+                    _active_sensor_kind(
+                        sensor_by_entity,
+                        _safe_int(track.get("entity_id")) or _safe_int(entity_key) or 0,
+                        battle_end,
+                    )
+                    or _active_consumable_kind(
+                        consumable_by_entity,
+                        _safe_int(track.get("entity_id")) or _safe_int(entity_key) or 0,
+                        battle_end,
+                    )
+                )
+                if not sunk
+                else None
+            )
             _draw_ship_marker(
                 img,
                 draw,
@@ -7451,25 +7503,13 @@ def render_static(canonical: Dict[str, Any], canvas_size: int = 1024, show_label
                 size=8,
                 sunk=sunk,
                 stale=stale,
-                consumable_kind=(
-                    (
-                        _active_sensor_kind(
-                            sensor_by_entity,
-                            _safe_int(track.get("entity_id")) or _safe_int(entity_key) or 0,
-                            battle_end,
-                        )
-                        or _active_consumable_kind(
-                            consumable_by_entity,
-                            _safe_int(track.get("entity_id")) or _safe_int(entity_key) or 0,
-                            battle_end,
-                        )
-                    )
-                    if not sunk
-                    else None
-                ),
+                consumable_kind=None,
             )
         if health is not None and not placeholder_only:
-            _draw_hp_bar(draw, ex, ey + 13, 28, 5, float(health.get("ratio", 0.0)), color, sunk=sunk or (not bool(health.get("alive", True))))
+            hp_y = ey + 13
+            hp_h = 5
+            _draw_hp_bar(draw, ex, hp_y, 28, hp_h, float(health.get("ratio", 0.0)), color, sunk=sunk or (not bool(health.get("alive", True))))
+            _draw_active_consumable_icon(img, ex, hp_y + hp_h + 3, active_kind, 8)
 
         if show_labels:
             player_name = track.get("player_name") or f"entity_{entity_key}"
@@ -8015,6 +8055,7 @@ def iter_animation_frames(canonical: Dict[str, Any], canvas_size: int = 600, spe
                     )
                 ]
             cx, cy = poly[-1]
+            active_kind: Optional[str] = None
             if placeholder_only:
                 _draw_ship_marker(
                     img,
@@ -8032,6 +8073,22 @@ def iter_animation_frames(canonical: Dict[str, Any], canvas_size: int = 600, spe
                     consumable_kind=None,
                 )
             else:
+                active_kind = (
+                    (
+                        _active_sensor_kind(
+                            sensor_by_entity,
+                            _safe_int(track.get("entity_id")) or _safe_int(entity_key) or 0,
+                            t_replay,
+                        )
+                        or _active_consumable_kind(
+                            consumable_by_entity,
+                            _safe_int(track.get("entity_id")) or _safe_int(entity_key) or 0,
+                            t_replay,
+                        )
+                    )
+                    if not sunk
+                    else None
+                )
                 _draw_ship_marker(
                     img,
                     draw,
@@ -8045,34 +8102,22 @@ def iter_animation_frames(canonical: Dict[str, Any], canvas_size: int = 600, spe
                     size=marker_size,
                     sunk=sunk,
                     stale=draw_stale,
-                    consumable_kind=(
-                        (
-                            _active_sensor_kind(
-                                sensor_by_entity,
-                                _safe_int(track.get("entity_id")) or _safe_int(entity_key) or 0,
-                                t_replay,
-                            )
-                            or _active_consumable_kind(
-                                consumable_by_entity,
-                                _safe_int(track.get("entity_id")) or _safe_int(entity_key) or 0,
-                                t_replay,
-                            )
-                        )
-                        if not sunk
-                        else None
-                    ),
+                    consumable_kind=None,
                 )
             if health is not None and not placeholder_only:
+                hp_y = cy + marker_size + 5
+                hp_h = max(4, marker_size // 2)
                 _draw_hp_bar(
                     draw,
                     cx,
-                    cy + marker_size + 5,
+                    hp_y,
                     max(20, marker_size * 4),
-                    max(4, marker_size // 2),
+                    hp_h,
                     float(health.get("ratio", 0.0)),
                     color,
                     sunk=sunk or (not bool(health.get("alive", True))),
                 )
+                _draw_active_consumable_icon(img, cx, hp_y + hp_h + 3, active_kind, marker_size)
 
         battle_clock_s = _battle_clock_seconds(canonical, capture_snapshot, t_replay)
         _draw_score_overlay(img, canonical, capture_snapshot, capture_timeline, canvas_size)

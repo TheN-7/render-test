@@ -302,6 +302,8 @@ def _infer_consumable_kind_from_tokens(tokens: set[str]) -> Optional[str]:
         return "radar"
     if any(token in t for t in tokens for token in ("hydro", "hydroacoustic", "acoustic", "sonar")):
         return "hydro"
+    if any(token in t for t in tokens for token in ("airdefensedisp", "airdefense", "defensiveaa", "defaa")):
+        return "dfaa"
     if any("smoke" in t for t in tokens):
         return "smoke"
     if any(token in t for t in tokens for token in ("speed", "boost", "engine", "speedbooster")):
@@ -2543,7 +2545,7 @@ def _extract_battle_overlay(
                 else:
                     # No reliable match for this ship/consumable; skip rendering.
                     return
-        if kind in ("heal", "engine", "smoke"):
+        if kind in ("heal", "engine", "smoke", "dfaa"):
             if duration_s <= 0.0:
                 return
             start_t = round(float(packet_time_ref[0]), 3)
