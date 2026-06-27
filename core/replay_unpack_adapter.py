@@ -505,38 +505,37 @@ def _load_gameparams_consumables() -> Dict[str, Any]:
         head = tokens[0]
         head_upper = head.upper()
 
-        if len(tokens) == 2 and tokens[1].isdigit():
-            info["nation_code"] = head_upper
-            info["tier_min"] = int(tokens[1])
-            info["tier_max"] = int(tokens[1])
-            return info
+        nation_code: Optional[str] = None
+        class_code: Optional[str] = None
 
+        # Class code merged into the head token, e.g. "UKDD_6_10" -> UK + DD.
         for cls in class_codes:
-            if head_upper.endswith(cls):
+            if head_upper.endswith(cls) and len(head_upper) > len(cls):
                 nation_code = head_upper[: -len(cls)]
-                if nation_code:
-                    info["nation_code"] = nation_code
-                info["class_code"] = cls
-        if len(tokens) > 1 and tokens[1].isdigit():
-            info["tier_min"] = int(tokens[1])
-            info["tier_max"] = int(tokens[1])
-        return info
-        if len(tokens) >= 3 and tokens[1].isdigit():
-            info["nation_code"] = head_upper
-            info["tier_min"] = int(tokens[1])
-            info["tier_max"] = int(tokens[1])
-            if tokens[2].upper() in class_codes:
-                info["class_code"] = tokens[2].upper()
-            return info
-        if len(tokens) >= 3 and tokens[1].upper() in class_codes and tokens[2].isdigit():
-            info["nation_code"] = head_upper
-            info["class_code"] = tokens[1].upper()
-            info["tier_min"] = int(tokens[2])
-            info["tier_max"] = int(tokens[2])
-            if len(tokens) >= 4 and tokens[3].isdigit():
-                info["tier_max"] = int(tokens[3])
-            return info
-        info["nation_code"] = head_upper
+                class_code = cls
+                break
+
+        rest = tokens[1:]
+        if nation_code is None:
+            # Otherwise the head is the nation/identifier on its own, e.g.
+            # "USSR_CA_8_10", "EU_DD", "Hawaii_PREMIUM". The class code (if
+            # any) shows up as its own token further along the key.
+            nation_code = head_upper
+            for tok in rest:
+                if tok.upper() in class_codes:
+                    class_code = tok.upper()
+                    break
+
+        if nation_code:
+            info["nation_code"] = nation_code
+        if class_code:
+            info["class_code"] = class_code
+
+        tier_digits = [int(tok) for tok in tokens if tok.isdigit()]
+        if tier_digits:
+            info["tier_min"] = tier_digits[0]
+            info["tier_max"] = tier_digits[1] if len(tier_digits) > 1 else tier_digits[0]
+
         return info
 
     for entry in matches:
@@ -769,11 +768,11 @@ def _score_consumable_variant(variant: Dict[str, Any], ship_info: Dict[str, Any]
     elif ship_type == "Submarine" and class_code == "SS":
         score += 1
     if ship_name and ship_name in variant_key:
-
-        if ship_name == variant_key:
-            score += 6
-        else:
-            score += 4
+        # Any name match (exact or substring, e.g. ship-specific premium
+        # variants like 'Hawaii_PREMIUM') should reliably outrank a generic
+        # nation/class/tier bucket match (max 2+2+1=5), since a named
+        # variant carries the most precise radar/hydro range for that hull.
+        score += 6
     else:
 
         parts = re.findall(r"[A-Z0-9]+", str(ship_info.get("name") or "").upper())
@@ -2414,13 +2413,13 @@ def _extract_battle_overlay(
             sensor_type_id = _decode_consumable_type_id(kwargs.get("consumableUsageParams"))
         sensor_kind_by_type = _SENSOR_CONSUMABLE_TYPE_TO_KIND.get(sensor_type_id) if sensor_type_id is not None else None
         sensor_type_variant = radar_variant if sensor_kind_by_type == "radar" else (sonar_variant if sensor_kind_by_type == "hydro" else None)
-        if sensor_kind_by_type and sensor_type_variant:
+        if sensor_kind_by_type and _consumable_kind_allowed(int(entity_id), sensor_kind_by_type):
             sensor_duration = 0.0
             if len(args) > 1:
                 sensor_duration = _safe_float(args[1], 0.0)
             elif "workTimeLeft" in kwargs:
                 sensor_duration = _safe_float(kwargs.get("workTimeLeft"), 0.0)
-            sensor_range_m = _safe_float(sensor_type_variant.get("range_m"), None)
+            sensor_range_m = _safe_float(sensor_type_variant.get("range_m"), None) if sensor_type_variant else None
             if sensor_range_m is None:
                 params = _lookup_consumable_params(sensor_kind_by_type, int(entity_id))
                 sensor_range_m = _safe_float(params.get("range_m"), None)
